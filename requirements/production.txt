@@ -1,5 +1,15 @@
 -r base.txt
 
+# Servidor y Estáticos
 gunicorn==22.0.0
 whitenoise==6.7.0
+
+# Base de datos (ya en base.txt pero aseguramos aquí)
+psycopg2-binary==2.9.9
+dj-database-url==2.2.0
+
+# Seguridad y CORS (ya en base.txt)
+django-cors-headers==4.4.0
+
+# Observabilidad
 sentry-sdk==2.14.0

@@ -17,10 +17,12 @@ from decouple import config
 DEBUG = False
 
 # ─── Hosts permitidos en Render ───────────────────────────────
-# Render provee RENDER_EXTERNAL_HOSTNAME automáticamente
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
+
 RENDER_HOSTNAME = config("RENDER_EXTERNAL_HOSTNAME", default="")
 if RENDER_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_HOSTNAME)  # noqa
+    ALLOWED_HOSTS.append(RENDER_HOSTNAME)
+    ALLOWED_HOSTS.append(".onrender.com")
 
 # ─── Seguridad HTTP ───────────────────────────────────────────
 SECURE_HSTS_SECONDS = 31536000
