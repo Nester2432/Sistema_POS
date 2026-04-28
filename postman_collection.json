@@ -1,0 +1,66 @@
+{
+	"info": {
+		"name": "Sistema POS SaaS API",
+		"description": "Colección de endpoints para la demo del Sistema POS SaaS.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@empresa.com\",\n    \"password\": \"admin123\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "{{base_url}}/api/v1/auth/login/"
+					}
+				}
+			]
+		},
+		{
+			"name": "Inventario",
+			"item": [
+				{
+					"name": "Listar Productos",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/inventario/productos/"
+					}
+				},
+				{
+					"name": "Stock Bajo",
+					"request": {
+						"method": "GET",
+						"url": "{{base_url}}/api/v1/inventario/productos/stock-bajo/"
+					}
+				}
+			]
+		},
+		{
+			"name": "POS / Ventas",
+			"item": [
+				{
+					"name": "Crear Venta",
+					"request": {
+						"method": "POST",
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"items\": [\n        {\"producto_id\": \"UUID-PROD\", \"cantidad\": 1}\n    ],\n    \"tipo_comprobante\": \"TICKET\",\n    \"metodo_pago\": \"EFECTIVO\"\n}",
+							"options": { "raw": { "language": "json" } }
+						},
+						"url": "{{base_url}}/api/v1/ventas/"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" }
+	]
+}
