@@ -18,16 +18,18 @@ export const MainLayout = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-950 text-slate-50">
       <Sidebar />
       <div className="flex-1 flex flex-col min-w-0">
         {/* Banner de Modo Demo */}
-        <div className="bg-amber-500 text-white text-[10px] font-bold uppercase tracking-[0.2em] py-1 text-center">
-          Entorno de Pruebas • Los datos se reinician periódicamente
+        <div className="bg-primary-600/10 text-primary-400 text-[10px] font-black uppercase tracking-[0.2em] py-1.5 text-center border-b border-primary-500/10 backdrop-blur-md">
+          SaaS Demo • Entorno de Pruebas • Operatividad Completa
         </div>
         <Navbar />
-        <main className="p-6 overflow-auto">
-          <Outlet />
+        <main className="p-8 overflow-auto">
+          <div className="max-w-7xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

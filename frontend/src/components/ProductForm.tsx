@@ -58,131 +58,140 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2 col-span-full">
-          <label className="text-sm font-bold text-slate-700">Nombre del Producto</label>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Sección de Nombre (Ancho completo) */}
+        <div className="space-y-3 col-span-full">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Nombre del Producto</label>
           <input
             required
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500 transition-all"
+            autoFocus
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-white font-bold text-lg placeholder:text-slate-700"
             value={formData.nombre}
             onChange={e => setFormData({ ...formData, nombre: e.target.value })}
             placeholder="Ej: Heladera Samsung No Frost"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">SKU / Referencia</label>
+        {/* SKU y Código */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">SKU / Referencia</label>
           <input
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-white font-bold"
             value={formData.sku}
             onChange={e => setFormData({ ...formData, sku: e.target.value })}
+            placeholder="SKU-000"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Código de Barras</label>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Código de Barras</label>
           <input
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-white font-bold"
             value={formData.codigo_barras}
             onChange={e => setFormData({ ...formData, codigo_barras: e.target.value })}
+            placeholder="779123456789"
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Categoría</label>
+        {/* Categoría y Proveedor */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Categoría</label>
           <select
             required
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-white font-bold appearance-none"
             value={formData.categoria}
             onChange={e => setFormData({ ...formData, categoria: e.target.value })}
           >
-            <option value="">Seleccionar...</option>
+            <option value="" className="bg-slate-900">Seleccionar...</option>
             {categorias.map((c: any) => (
-              <option key={c.id} value={c.id}>{c.nombre}</option>
+              <option key={c.id} value={c.id} className="bg-slate-900">{c.nombre}</option>
             ))}
           </select>
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Proveedor</label>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Proveedor</label>
           <select
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 focus:bg-white/10 transition-all text-white font-bold appearance-none"
             value={formData.proveedor}
             onChange={e => setFormData({ ...formData, proveedor: e.target.value })}
           >
-            <option value="">Ninguno</option>
+            <option value="" className="bg-slate-900">Ninguno</option>
             {proveedores.map((p: any) => (
-              <option key={p.id} value={p.id}>{p.nombre}</option>
+              <option key={p.id} value={p.id} className="bg-slate-900">{p.nombre}</option>
             ))}
           </select>
         </div>
 
-        <div className="space-y-2 p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
-          <label className="text-sm font-bold text-emerald-800">Precio de Venta ($)</label>
+        {/* Precios con diseño destacado */}
+        <div className="space-y-3 p-6 bg-primary-500/5 border border-primary-500/10 rounded-[2rem]">
+          <label className="text-[10px] font-black text-primary-400 uppercase tracking-[0.2em] ml-1">Precio de Venta ($)</label>
           <input
             required
             type="number"
             step="0.01"
-            className="w-full p-2 bg-white border-transparent rounded-lg outline-none text-emerald-700 font-bold text-lg"
+            className="w-full bg-transparent border-none outline-none text-white font-black text-3xl tracking-tighter"
             value={formData.precio_venta}
             onChange={e => setFormData({ ...formData, precio_venta: Number(e.target.value) })}
           />
         </div>
 
-        <div className="space-y-2 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-          <label className="text-sm font-bold text-slate-500">Precio de Costo ($)</label>
+        <div className="space-y-3 p-6 bg-white/5 border border-white/10 rounded-[2rem]">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Precio de Costo ($)</label>
           <input
             required
             type="number"
             step="0.01"
-            className="w-full p-2 bg-white border-transparent rounded-lg outline-none text-slate-600 font-bold text-lg"
+            className="w-full bg-transparent border-none outline-none text-slate-300 font-black text-3xl tracking-tighter"
             value={formData.precio_costo}
             onChange={e => setFormData({ ...formData, precio_costo: Number(e.target.value) })}
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Stock Inicial</label>
+        {/* Stocks */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Stock Inicial</label>
           <input
             required
             type="number"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 text-white font-bold"
             value={formData.stock_actual}
             onChange={e => setFormData({ ...formData, stock_actual: Number(e.target.value) })}
           />
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-bold text-slate-700">Stock Mínimo (Alerta)</label>
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">Stock Mínimo (Alerta)</label>
           <input
             required
             type="number"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-primary-500/50 text-white font-bold"
             value={formData.stock_minimo}
             onChange={e => setFormData({ ...formData, stock_minimo: Number(e.target.value) })}
           />
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 pt-6 border-t">
+      {/* Botones de Acción */}
+      <div className="flex justify-end gap-4 pt-8 border-t border-white/5">
         <button
           type="button"
           onClick={onSuccess}
-          className="px-6 py-3 text-slate-500 font-bold hover:text-slate-700 transition-colors active:scale-95"
+          className="px-8 py-4 text-slate-500 font-black text-xs uppercase tracking-widest hover:text-white transition-all active:scale-95"
         >
-          Cancelar
+          CANCELAR
         </button>
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 text-slate-900 font-bold rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-50 active:scale-95 group"
+          className="flex items-center gap-3 px-10 py-4 bg-white text-slate-950 font-black rounded-2xl shadow-xl shadow-white/5 hover:bg-slate-200 transition-all disabled:opacity-50 active:scale-95 group"
         >
           {mutation.isPending ? (
             <Loader2 className="animate-spin" size={20} />
           ) : (
             <>
-              <span>{initialData?.id ? 'Actualizar Producto' : 'Guardar Producto'}</span>
+              <span className="text-xs uppercase tracking-widest">{initialData?.id ? 'ACTUALIZAR' : 'GUARDAR PRODUCTO'}</span>
               <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
             </>
           )}

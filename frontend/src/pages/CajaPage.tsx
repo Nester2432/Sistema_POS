@@ -136,40 +136,99 @@ export const CajaPage = () => {
         </div>
       </div>
 
-      {/* Ultimos Movimientos */}
-      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="p-4 bg-slate-50 border-b flex items-center justify-between">
-          <h3 className="font-bold text-slate-800">Últimos Movimientos de la Sesión</h3>
-        </div>
-        <div className="p-0">
-          <table className="w-full text-left border-collapse">
-            <tbody className="divide-y divide-slate-50">
-              {estaAbierta && caja.movimientos?.map((mov: any) => (
-                <tr key={mov.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${mov.monto > 0 ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'}`}>
-                        {mov.monto > 0 ? <ArrowUpCircle size={16} /> : <ArrowDownCircle size={16} />}
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold text-slate-900">{mov.concepto}</p>
-                        <p className="text-xs text-slate-400">{new Date(mov.fecha).toLocaleTimeString()} • {mov.metodo_pago}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500 italic">{mov.tipo}</td>
-                  <td className="px-6 py-4 text-right">
-                    <span className={`font-bold ${mov.monto > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                      {mov.monto > 0 ? '+' : ''}{mov.monto}
-                    </span>
-                  </td>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 bg-white/5 backdrop-blur-md rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden">
+          <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+            <h3 className="text-xl font-black text-white tracking-tighter uppercase tracking-widest text-[10px] opacity-50">Movimientos de Turno</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-white/[0.01] border-b border-white/5">
+                  <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Tipo</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest">Concepto</th>
+                  <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-widest text-right">Monto</th>
                 </tr>
-              ))}
-              {(!estaAbierta || (caja.movimientos?.length === 0)) && (
-                <tr><td colSpan={3} className="px-6 py-8 text-center text-slate-400">No hay movimientos en esta sesión</td></tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                {(!estaAbierta || caja.movimientos?.length === 0) ? (
+                  <tr>
+                    <td colSpan={3} className="px-8 py-12 text-center text-slate-600 font-bold italic">No hay movimientos registrados en este turno.</td>
+                  </tr>
+                ) : caja.movimientos?.map((mov: any) => (
+                  <tr key={mov.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-3">
+                        {mov.monto > 0 ? (
+                          <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg"><ArrowUpCircle size={18} /></div>
+                        ) : (
+                          <div className="p-2 bg-rose-500/10 text-rose-400 rounded-lg"><ArrowDownCircle size={18} /></div>
+                        )}
+                        <span className="font-black text-xs text-white tracking-widest">{mov.tipo}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <p className="text-sm font-bold text-slate-300">{mov.concepto}</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-1">{new Date(mov.fecha).toLocaleTimeString()}</p>
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <p className={`text-lg font-black ${mov.monto > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {mov.monto > 0 ? '+' : ''}{Number(mov.monto).toLocaleString()}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Acciones Rápidas */}
+        <div className="space-y-6">
+          <div className="bg-slate-900 p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
+            <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6 text-center">Acciones de Efectivo</h3>
+            <div className="space-y-4">
+              <button 
+                onClick={() => setModalType('INGRESO')}
+                className="w-full flex items-center justify-between p-5 bg-emerald-500/5 border border-emerald-500/20 rounded-[1.5rem] text-emerald-400 hover:bg-emerald-500/10 transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-emerald-500/20 rounded-xl group-hover:scale-110 transition-transform">
+                    <ArrowUpCircle size={24} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-black text-sm tracking-tight">INGRESO MANUAL</p>
+                    <p className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Aporte capital, otros</p>
+                  </div>
+                </div>
+                <Plus size={20} className="opacity-40" />
+              </button>
+
+              <button 
+                onClick={() => setModalType('EGRESO')}
+                className="w-full flex items-center justify-between p-5 bg-rose-500/5 border border-rose-500/20 rounded-[1.5rem] text-rose-400 hover:bg-rose-500/10 transition-all group"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-rose-500/20 rounded-xl group-hover:scale-110 transition-transform">
+                    <ArrowDownCircle size={24} />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-black text-sm tracking-tight">EGRESO DE CAJA</p>
+                    <p className="text-[10px] opacity-60 font-bold uppercase tracking-widest">Pagos, retiros, gastos</p>
+                  </div>
+                </div>
+                <Minus size={20} className="opacity-40" />
+              </button>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => setModalType('CERRAR')}
+            className="w-full py-6 bg-white text-slate-950 rounded-[2rem] font-black text-lg shadow-2xl shadow-white/5 hover:bg-slate-200 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+          >
+            <Lock size={20} className="text-slate-400 group-hover:rotate-12 transition-transform" />
+            <span>CERRAR CAJA / ARQUEO</span>
+          </button>
         </div>
       </div>
 
