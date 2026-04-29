@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
-import { Unlock, Lock, Save, ArrowUpCircle, ArrowDownCircle, Loader2, ArrowRight } from 'lucide-react';
+import { Unlock, Lock, ArrowUpCircle, ArrowDownCircle, Loader2, ArrowRight } from 'lucide-react';
 
 interface FormProps {
   onSuccess: () => void;
