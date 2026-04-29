@@ -109,12 +109,12 @@ export const MovimientoCajaForm = ({ onSuccess, tipo }: { onSuccess: () => void,
 };
 
 // 3. Cerrar Caja
-export const CerrarCajaForm = ({ onSuccess, saldoEstimado }: { onSuccess: () => void, saldoEstimado: number }) => {
+export const CerrarCajaForm = ({ onSuccess, saldoEstimado, cajaId }: { onSuccess: () => void, saldoEstimado: number, cajaId: number }) => {
   const queryClient = useQueryClient();
   const [saldoDeclarado, setSaldoDeclarado] = useState(0);
 
   const mutation = useMutation({
-    mutationFn: (data: any) => api.post('/caja/cerrar/', data),
+    mutationFn: (data: any) => api.post(`/caja/${cajaId}/cerrar/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['caja-mi-caja'] });
       onSuccess();

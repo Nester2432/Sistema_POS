@@ -45,40 +45,40 @@ export const CajaPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Estado de Caja */}
-        <div className={`lg:col-span-2 p-8 rounded-[2rem] shadow-xl transition-all ${estaAbierta ? 'bg-primary-600 text-white' : 'bg-slate-100 text-slate-500 border-2 border-dashed border-slate-300'}`}>
+        <div className={`lg:col-span-2 p-8 rounded-[2rem] shadow-xl transition-all ${estaAbierta ? 'bg-slate-900 text-white' : 'bg-white text-slate-500 border border-slate-200'}`}>
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <div className={`p-3 rounded-2xl ${estaAbierta ? 'bg-primary-500' : 'bg-slate-200'}`}>
-                {estaAbierta ? <Unlock size={24} /> : <Lock size={24} />}
+              <div className={`p-3 rounded-2xl ${estaAbierta ? 'bg-slate-800 border border-white/10' : 'bg-slate-50'}`}>
+                {estaAbierta ? <Unlock size={24} className="text-primary-400" /> : <Lock size={24} />}
               </div>
               <div>
-                <p className="text-sm font-bold opacity-80 uppercase tracking-widest">Estado Actual</p>
-                <h3 className="text-2xl font-black">{estaAbierta ? 'CAJA ABIERTA' : 'CAJA CERRADA'}</h3>
+                <p className="text-sm font-black opacity-60 uppercase tracking-widest">Estado Actual</p>
+                <h3 className="text-2xl font-black tracking-tight">{estaAbierta ? 'CAJA ABIERTA' : 'CAJA CERRADA'}</h3>
               </div>
             </div>
             {estaAbierta && (
               <div className="text-right">
-                <p className="text-sm opacity-80">Abierta por: <span className="font-bold">{caja.usuario_apertura_nombre}</span></p>
-                <p className="text-xs opacity-60">{new Date(caja.fecha_apertura).toLocaleString()}</p>
+                <p className="text-sm opacity-60 font-medium">Responsable: <span className="text-white">{caja.usuario_apertura_nombre}</span></p>
+                <p className="text-xs opacity-40">{new Date(caja.fecha_apertura).toLocaleString()}</p>
               </div>
             )}
           </div>
 
           {estaAbierta ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4 border-t border-white/5">
               <div>
-                <p className="text-primary-100 text-sm mb-1 font-medium">Saldo Inicial</p>
-                <p className="text-3xl font-mono font-bold">${caja.saldo_inicial}</p>
+                <p className="text-slate-400 text-xs mb-1 font-black uppercase tracking-wider">Saldo Inicial</p>
+                <p className="text-3xl font-mono font-bold text-white">${caja.saldo_inicial}</p>
               </div>
               <div>
-                <p className="text-primary-100 text-sm mb-1 font-medium">Total Movimientos</p>
-                <p className={`text-3xl font-mono font-bold ${(caja.total_ingresos - caja.total_egresos) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                <p className="text-slate-400 text-xs mb-1 font-black uppercase tracking-wider">Flujo Neto</p>
+                <p className={`text-3xl font-mono font-bold ${(caja.total_ingresos - caja.total_egresos) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                   ${((caja.total_ingresos || 0) - (caja.total_egresos || 0)).toFixed(2)}
                 </p>
               </div>
               <div>
-                <p className="text-primary-100 text-sm mb-1 font-medium">Saldo en Caja (Sistema)</p>
-                <p className="text-4xl font-mono font-black">${saldoEstimado.toFixed(2)}</p>
+                <p className="text-primary-400 text-xs mb-1 font-black uppercase tracking-wider">Saldo en Sistema</p>
+                <p className="text-4xl font-mono font-black text-white">${saldoEstimado.toFixed(2)}</p>
               </div>
             </div>
           ) : (
