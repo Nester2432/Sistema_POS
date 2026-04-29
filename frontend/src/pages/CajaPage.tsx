@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
+import { Modal } from '../components/Modal';
+import { AbrirCajaForm, CerrarCajaForm, MovimientoCajaForm } from '../components/CajaForms';
 import { 
   Wallet, 
   ArrowUpCircle, 
@@ -11,6 +14,8 @@ import {
 } from 'lucide-react';
 
 export const CajaPage = () => {
+  const [modalType, setModalType] = useState<string | null>(null);
+
   const { data: caja, isLoading } = useQuery({
     queryKey: ['caja-actual'],
     queryFn: async () => {
@@ -22,6 +27,7 @@ export const CajaPage = () => {
   if (isLoading) return <div className="p-8 text-center text-slate-400">Cargando estado de caja...</div>;
 
   const estaAbierta = !!caja;
+  const saldoEstimado = estaAbierta ? (Number(caja.saldo_inicial) + (caja.total_ingresos || 0) - (caja.total_egresos || 0)) : 0;
 
   return (
     <div className="space-y-6">
@@ -66,19 +72,24 @@ export const CajaPage = () => {
                 <p className="text-3xl font-mono font-bold">${caja.saldo_inicial}</p>
               </div>
               <div>
-                <p className="text-primary-100 text-sm mb-1 font-medium">Ventas / Ingresos</p>
-                <p className="text-3xl font-mono font-bold text-emerald-300">+$25,430.00</p>
+                <p className="text-primary-100 text-sm mb-1 font-medium">Total Movimientos</p>
+                <p className={`text-3xl font-mono font-bold ${(caja.total_ingresos - caja.total_egresos) >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>
+                  ${((caja.total_ingresos || 0) - (caja.total_egresos || 0)).toFixed(2)}
+                </p>
               </div>
               <div>
-                <p className="text-primary-100 text-sm mb-1 font-medium">Saldo Estimado</p>
-                <p className="text-4xl font-mono font-black">${Number(caja.saldo_inicial) + 25430}</p>
+                <p className="text-primary-100 text-sm mb-1 font-medium">Saldo en Caja (Sistema)</p>
+                <p className="text-4xl font-mono font-black">${saldoEstimado.toFixed(2)}</p>
               </div>
             </div>
           ) : (
             <div className="flex flex-col items-center py-8 text-center">
               <AlertCircle size={48} className="mb-4 opacity-30" />
               <p className="text-lg font-medium mb-6">Debe abrir la caja para comenzar a registrar ventas.</p>
-              <button className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-lg">
+              <button 
+                onClick={() => setModalType('ABRIR')}
+                className="px-8 py-3 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all shadow-lg"
+              >
                 Abrir Caja con Saldo Inicial
               </button>
             </div>
@@ -87,7 +98,11 @@ export const CajaPage = () => {
 
         {/* Acciones de Movimiento */}
         <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col justify-center gap-4">
-          <button disabled={!estaAbierta} className="flex items-center gap-4 p-4 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100 transition-all group disabled:opacity-50">
+          <button 
+            disabled={!estaAbierta} 
+            onClick={() => setModalType('INGRESO')}
+            className="flex items-center gap-4 p-4 bg-emerald-50 text-emerald-700 rounded-2xl hover:bg-emerald-100 transition-all group disabled:opacity-50"
+          >
             <div className="p-2 bg-emerald-500 text-white rounded-xl group-hover:scale-110 transition-transform">
               <ArrowUpCircle size={24} />
             </div>
@@ -97,7 +112,11 @@ export const CajaPage = () => {
             </div>
           </button>
           
-          <button disabled={!estaAbierta} className="flex items-center gap-4 p-4 bg-rose-50 text-rose-700 rounded-2xl hover:bg-rose-100 transition-all group disabled:opacity-50">
+          <button 
+            disabled={!estaAbierta} 
+            onClick={() => setModalType('EGRESO')}
+            className="flex items-center gap-4 p-4 bg-rose-50 text-rose-700 rounded-2xl hover:bg-rose-100 transition-all group disabled:opacity-50"
+          >
             <div className="p-2 bg-rose-500 text-white rounded-xl group-hover:scale-110 transition-transform">
               <ArrowDownCircle size={24} />
             </div>
@@ -108,7 +127,10 @@ export const CajaPage = () => {
           </button>
 
           {estaAbierta && (
-            <button className="mt-4 w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all">
+            <button 
+              onClick={() => setModalType('CERRAR')}
+              className="mt-4 w-full py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-all"
+            >
               Cerrar Caja / Arqueo
             </button>
           )}
@@ -118,35 +140,50 @@ export const CajaPage = () => {
       {/* Ultimos Movimientos */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-4 bg-slate-50 border-b flex items-center justify-between">
-          <h3 className="font-bold text-slate-800">Últimos Movimientos</h3>
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Hoy</span>
+          <h3 className="font-bold text-slate-800">Últimos Movimientos de la Sesión</h3>
         </div>
         <div className="p-0">
           <table className="w-full text-left border-collapse">
             <tbody className="divide-y divide-slate-50">
-              {[1, 2, 3].map((i) => (
-                <tr key={i} className="hover:bg-slate-50 transition-colors">
+              {estaAbierta && caja.movimientos?.map((mov: any) => (
+                <tr key={mov.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-slate-100 text-slate-500 rounded-lg">
-                        <Wallet size={16} />
+                      <div className={`p-2 rounded-lg ${mov.monto > 0 ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500'}`}>
+                        {mov.monto > 0 ? <ArrowUpCircle size={16} /> : <ArrowDownCircle size={16} />}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-slate-900">Venta de Productos #T-00{i}</p>
-                        <p className="text-xs text-slate-400">14:30 hs • Efectivo</p>
+                        <p className="text-sm font-bold text-slate-900">{mov.concepto}</p>
+                        <p className="text-xs text-slate-400">{new Date(mov.fecha).toLocaleTimeString()} • {mov.metodo_pago}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-sm text-slate-500 italic">Pago de cliente demo</td>
+                  <td className="px-6 py-4 text-sm text-slate-500 italic">{mov.tipo}</td>
                   <td className="px-6 py-4 text-right">
-                    <span className="font-bold text-emerald-600">+$1,500.00</span>
+                    <span className={`font-bold ${mov.monto > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {mov.monto > 0 ? '+' : ''}{mov.monto}
+                    </span>
                   </td>
                 </tr>
               ))}
+              {(!estaAbierta || (caja.movimientos?.length === 0)) && (
+                <tr><td colSpan={3} className="px-6 py-8 text-center text-slate-400">No hay movimientos en esta sesión</td></tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* MODALES */}
+      <Modal 
+        isOpen={!!modalType} 
+        onClose={() => setModalType(null)} 
+        title={modalType === 'ABRIR' ? 'Apertura de Caja' : modalType === 'CERRAR' ? 'Cierre de Caja' : 'Movimiento de Caja'}
+      >
+        {modalType === 'ABRIR' && <AbrirCajaForm onSuccess={() => setModalType(null)} />}
+        {modalType === 'CERRAR' && <CerrarCajaForm onSuccess={() => setModalType(null)} saldoEstimado={saldoEstimado} />}
+        {(modalType === 'INGRESO' || modalType === 'EGRESO') && <MovimientoCajaForm onSuccess={() => setModalType(null)} tipo={modalType as any} />}
+      </Modal>
     </div>
   );
 };

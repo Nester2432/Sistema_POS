@@ -21,7 +21,16 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Iniciando seed de ElectroHogar Demo...")
 
-        # 1. Obtener o Crear Empresa Demo
+        # 1. Asegurar Superusuario Maestro (Plataforma SaaS)
+        if not Usuario.objects.filter(email="master@sistema.com").exists():
+            Usuario.objects.create_superuser(
+                email="master@sistema.com",
+                password="master123",
+                nombre="Master Admin"
+            )
+            self.stdout.write("✅ Superusuario maestro creado.")
+
+        # 2. Obtener o Crear Empresa Demo
         empresa, _ = Empresa.objects.update_or_create(
             documento_fiscal="DEMO-ELECTRO-001",
             defaults={
@@ -31,7 +40,7 @@ class Command(BaseCommand):
             }
         )
         
-        # 2. LIMPIEZA PROFUNDA
+        # 3. LIMPIEZA PROFUNDA
         self.stdout.write("Limpiando transacciones y movimientos...")
         Venta.objects.filter(empresa=empresa).delete()
         Compra.objects.filter(empresa=empresa).delete()
@@ -48,7 +57,7 @@ class Command(BaseCommand):
         CuentaCorriente.objects.filter(empresa=empresa).delete()
         Cliente.objects.filter(empresa=empresa).delete()
 
-        # 3. Crear o Actualizar Usuario Admin Demo
+        # 4. Crear o Actualizar Usuario Admin Demo
         user, _ = Usuario.objects.update_or_create(
             email="admin@demo.com",
             defaults={
@@ -61,7 +70,7 @@ class Command(BaseCommand):
         user.set_password("demo123")
         user.save()
 
-        # 4. Maestros
+        # 5. Maestros
         cats = {}
         for cat_name in ["Heladeras", "Lavarropas", "Cocinas", "Microondas", "Televisores", "Pequeños Electrodomésticos"]:
             cats[cat_name], _ = Categoria.objects.get_or_create(empresa=empresa, nombre=cat_name)
@@ -69,23 +78,23 @@ class Command(BaseCommand):
         prov_electra, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Distribuidora Electra S.A.", documento="30-11111111-9")
         prov_tech, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Tech Wholesale", documento="30-22222222-9")
 
-        # 5. Productos
+        # 6. Productos
         productos_data = [
-            {"n": "Heladera Samsung No Frost 420L", "c": "Heladeras", "sku": "REF-SAM-420", "pc": 450000, "pv": 680000, "s": 10},
-            {"n": "Heladera Whirlpool 390L", "c": "Heladeras", "sku": "REF-WHI-390", "pc": 410000, "pv": 590000, "s": 8},
-            {"n": "Lavarropas Drean 7kg Next", "c": "Lavarropas", "sku": "WASH-DRE-07", "pc": 280000, "pv": 420000, "s": 15},
-            {"n": "Lavarropas LG Inverter 8kg", "c": "Lavarropas", "sku": "WASH-LG-08", "pc": 350000, "pv": 530000, "s": 12},
-            {"n": "Smart TV Samsung 50' 4K", "c": "Televisores", "sku": "TV-SAM-50", "pc": 320000, "pv": 490000, "s": 20},
-            {"n": "Smart TV LG 43' ThinQ", "c": "Televisores", "sku": "TV-LG-43", "pc": 240000, "pv": 380000, "s": 18},
-            {"n": "Smart TV Noblex 32' HD", "c": "Televisores", "sku": "TV-NOB-32", "pc": 110000, "pv": 185000, "s": 25},
-            {"n": "Cocina Escorial 4 hornallas", "c": "Cocinas", "sku": "STOVE-ESC-04", "pc": 150000, "pv": 240000, "s": 7},
-            {"n": "Cocina Orbis acero inoxidable", "c": "Cocinas", "sku": "STOVE-ORB-AC", "pc": 220000, "pv": 360000, "s": 5},
-            {"n": "Microondas BGH 20L Blanco", "c": "Microondas", "sku": "MW-BGH-20", "pc": 65000, "pv": 98000, "s": 30},
-            {"n": "Microondas Atma digital 23L", "c": "Microondas", "sku": "MW-ATM-23", "pc": 78000, "pv": 125000, "s": 22},
-            {"n": "Pava eléctrica Philips 1.7L", "c": "Pequeños Electrodomésticos", "sku": "KET-PHI-17", "pc": 18000, "pv": 32000, "s": 50},
-            {"n": "Licuadora Moulinex Optimix", "c": "Pequeños Electrodomésticos", "sku": "BLEN-MOU-01", "pc": 25000, "pv": 45000, "s": 40},
-            {"n": "Tostadora Atma Vintage", "c": "Pequeños Electrodomésticos", "sku": "TOAST-ATM-01", "pc": 15000, "pv": 28000, "s": 35},
-            {"n": "Aspiradora Philips 1800W", "c": "Pequeños Electrodomésticos", "sku": "VAC-PHI-18", "pc": 42000, "pv": 75000, "s": 14},
+            {"n": "Heladera Samsung No Frost 420L", "c": "Heladeras", "sku": "REF-SAM-420", "pc": 45000, "pv": 68000, "s": 10},
+            {"n": "Heladera Whirlpool 390L", "c": "Heladeras", "sku": "REF-WHI-390", "pc": 41000, "pv": 59000, "s": 8},
+            {"n": "Lavarropas Drean 7kg Next", "c": "Lavarropas", "sku": "WASH-DRE-07", "pc": 28000, "pv": 42000, "s": 15},
+            {"n": "Lavarropas LG Inverter 8kg", "c": "Lavarropas", "sku": "WASH-LG-08", "pc": 35000, "pv": 53000, "s": 12},
+            {"n": "Smart TV Samsung 50' 4K", "c": "Televisores", "sku": "TV-SAM-50", "pc": 32000, "pv": 49000, "s": 20},
+            {"n": "Smart TV LG 43' ThinQ", "c": "Televisores", "sku": "TV-LG-43", "pc": 24000, "pv": 38000, "s": 18},
+            {"n": "Smart TV Noblex 32' HD", "c": "Televisores", "sku": "TV-NOB-32", "pc": 11000, "pv": 18500, "s": 25},
+            {"n": "Cocina Escorial 4 hornallas", "c": "Cocinas", "sku": "STOVE-ESC-04", "pc": 15000, "pv": 24000, "s": 7},
+            {"n": "Cocina Orbis acero inoxidable", "c": "Cocinas", "sku": "STOVE-ORB-AC", "pc": 22000, "pv": 36000, "s": 5},
+            {"n": "Microondas BGH 20L Blanco", "c": "Microondas", "sku": "MW-BGH-20", "pc": 6500, "pv": 9800, "s": 30},
+            {"n": "Microondas Atma digital 23L", "c": "Microondas", "sku": "MW-ATM-23", "pc": 7800, "pv": 12500, "s": 22},
+            {"n": "Pava eléctrica Philips 1.7L", "c": "Pequeños Electrodomésticos", "sku": "KET-PHI-17", "pc": 1800, "pv": 3200, "s": 50},
+            {"n": "Licuadora Moulinex Optimix", "c": "Pequeños Electrodomésticos", "sku": "BLEN-MOU-01", "pc": 2500, "pv": 4500, "s": 40},
+            {"n": "Tostadora Atma Vintage", "c": "Pequeños Electrodomésticos", "sku": "TOAST-ATM-01", "pc": 1500, "pv": 2800, "s": 35},
+            {"n": "Aspiradora Philips 1800W", "c": "Pequeños Electrodomésticos", "sku": "VAC-PHI-18", "pc": 4200, "pv": 7500, "s": 14},
         ]
 
         prods_inst = []
@@ -100,13 +109,13 @@ class Command(BaseCommand):
                 stock_actual=Decimal(str(p["s"])),
                 stock_minimo=Decimal("2"),
                 categoria=cats[p["c"]],
-                proveedor=prov_electra if p["pc"] > 100000 else prov_tech
+                proveedor=prov_electra if p["pc"] > 10000 else prov_tech
             )
             prods_inst.append(prod)
 
         self.stdout.write(f"Creados {len(prods_inst)} productos para {empresa.nombre}")
 
-        # 6. Clientes
+        # 7. Clientes
         clientes = [
             {"n": "Consumidor", "a": "Final", "d": "99999999"},
             {"n": "Juan", "a": "Frecuente", "d": "20334455"},
@@ -118,16 +127,16 @@ class Command(BaseCommand):
         for c in clientes:
             clients_inst.append(crear_cliente_con_cuenta(empresa, user, nombre=c["n"], apellido=c["a"], documento=c["d"]))
 
-        # 7. Caja
+        # 8. Caja
         caja = abrir_caja(user, empresa, Decimal("150000.00"))
 
-        # 8. Ventas e Ingresos
+        # 9. Ventas e Ingresos
         crear_venta_completa(user, empresa, [{"producto": prods_inst[4], "cantidad": 1}], "TICKET", "EFECTIVO", cliente=clients_inst[0])
         crear_venta_completa(user, empresa, [{"producto": prods_inst[11], "cantidad": 2}], "TICKET", "TARJETA", cliente=clients_inst[1])
         crear_venta_completa(user, empresa, [{"producto": prods_inst[0], "cantidad": 1}], "FACTURA", "CUENTA_CORRIENTE", cliente=clients_inst[3])
 
-        # 9. Compras
-        crear_compra_completa(user, empresa, prov_tech, [{"producto": prods_inst[12], "cantidad": 10, "precio_unitario": 22000}], "FACTURA", "0001-0000456", "EFECTIVO")
-        crear_compra_completa(user, empresa, prov_electra, [{"producto": prods_inst[2], "cantidad": 5, "precio_unitario": 270000}], "FACTURA", "0002-0000123", "TRANSFERENCIA")
+        # 10. Compras
+        crear_compra_completa(user, empresa, prov_tech, [{"producto": prods_inst[12], "cantidad": 10, "precio_unitario": 2200}], "FACTURA", "0001-0000456", "EFECTIVO")
+        crear_compra_completa(user, empresa, prov_electra, [{"producto": prods_inst[2], "cantidad": 5, "precio_unitario": 27000}], "FACTURA", "0002-0000123", "TRANSFERENCIA")
 
         self.stdout.write(self.style.SUCCESS("✅ ElectroHogar Demo inicializada correctamente."))

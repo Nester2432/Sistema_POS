@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
+import { Modal } from '../components/Modal';
+import { ProductForm } from '../components/ProductForm';
 import { 
   Plus, 
   Search, 
@@ -14,12 +16,13 @@ import {
 
 export const InventoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   
   const { data, isLoading } = useQuery({
     queryKey: ['productos', searchTerm],
     queryFn: async () => {
       const response = await api.get(`/inventario/productos/?search=${searchTerm}`);
-      // Manejar tanto formato { data: { results: [] } } como { results: [] }
       return response.data.data || response.data;
     }
   });
@@ -38,7 +41,10 @@ export const InventoryPage = () => {
             <Download size={18} />
             Exportar
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-100">
+          <button 
+            onClick={() => { setSelectedProduct(null); setIsModalOpen(true); }}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-100"
+          >
             <Plus size={18} />
             Nuevo Producto
           </button>
@@ -117,7 +123,10 @@ export const InventoryPage = () => {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all">
+                      <button 
+                        onClick={() => { setSelectedProduct(prod); setIsModalOpen(true); }}
+                        className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
+                      >
                         <Edit size={18} />
                       </button>
                       <button className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all">
@@ -131,6 +140,17 @@ export const InventoryPage = () => {
           </table>
         </div>
       </div>
+
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        title={selectedProduct ? 'Editar Producto' : 'Nuevo Producto'}
+      >
+        <ProductForm 
+          onSuccess={() => setIsModalOpen(false)} 
+          initialData={selectedProduct} 
+        />
+      </Modal>
     </div>
   );
 };
