@@ -45,13 +45,17 @@ export const LandingPage = () => {
           La solución más completa y rápida para gestionar tus ventas, stock y finanzas en una sola plataforma.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/login" className="flex items-center gap-2 px-8 py-4 bg-primary-600 text-white rounded-2xl font-bold text-lg hover:bg-primary-700 shadow-xl shadow-primary-200 transition-all">
-            Probar demo
-            <Play size={20} fill="currentColor" />
+          <Link 
+            to="/login" 
+            className="flex items-center justify-center gap-2 px-10 py-5 bg-white text-slate-900 border border-slate-200 rounded-[1.5rem] font-bold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95 group"
+          >
+            <span>Probar demo</span>
+            <ArrowRight size={20} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <button className="flex items-center gap-2 px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all">
-            Solicitar acceso
-            <ArrowRight size={20} />
+          
+          <button className="flex items-center justify-center gap-2 px-10 py-5 bg-white text-slate-900 border border-slate-200 rounded-[1.5rem] font-bold text-lg hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95 group">
+            <span>Solicitar acceso</span>
+            <ArrowRight size={20} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </section>
@@ -128,12 +132,12 @@ export const LandingPage = () => {
 
       {/* Final CTA */}
       <section className="py-32 bg-white text-center px-6">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-8">¿Listo para llevar tu negocio al siguiente nivel?</h2>
+        <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-8">¿Listo para potenciar tu negocio?</h2>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link to="/login" className="px-10 py-5 bg-primary-600 text-white rounded-2xl font-bold text-xl hover:bg-primary-700 shadow-2xl shadow-primary-200 transition-all">
+          <Link to="/login" className="px-12 py-5 bg-slate-900 text-white rounded-[1.5rem] font-bold text-xl hover:bg-black shadow-xl transition-all active:scale-95">
             Comenzar ahora
           </Link>
-          <button className="px-10 py-5 bg-slate-100 text-slate-700 rounded-2xl font-bold text-xl hover:bg-slate-200 transition-all">
+          <button className="px-12 py-5 bg-white text-slate-900 border border-slate-200 rounded-[1.5rem] font-bold text-xl hover:bg-slate-50 transition-all active:scale-95">
             Agendar Demo
           </button>
         </div>
