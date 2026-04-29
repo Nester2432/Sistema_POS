@@ -35,8 +35,9 @@ def reset_demo(request):
         
         # 3. Generar Tokens
         refresh = RefreshToken.for_user(user)
-        # INYECTAR empresa_id explícitamente para el Middleware
+        # INYECTAR empresa_id explícitamente tanto en Refresh como en Access
         refresh['empresa_id'] = str(user.empresa_id)
+        refresh.access_token['empresa_id'] = str(user.empresa_id)
         
         data = {
             "access": str(refresh.access_token),
