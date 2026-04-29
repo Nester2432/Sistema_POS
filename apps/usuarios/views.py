@@ -79,7 +79,7 @@ class LoginView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         logger.info("Login exitoso: email=%s", request.data.get("email", "?"))
-        return response
+        return success_response(data=response.data, message="Login exitoso.")
 
 
 class RefreshView(TokenRefreshView):

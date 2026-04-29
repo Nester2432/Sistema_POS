@@ -20,9 +20,9 @@ export const LoginPage = () => {
     
     try {
       const response = await api.post('/auth/login/', { email, password });
-      const { access, refresh, user } = response.data.data; // Según nuestra estructura de respuesta
+      const { access, refresh, usuario } = response.data.data;
       
-      setAuth(user, access, refresh);
+      setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error al iniciar sesión. Verifique sus credenciales.');
@@ -38,14 +38,13 @@ export const LoginPage = () => {
       // 1. Resetear datos demo (opcional pero recomendado para demo limpia)
       await api.post('/demo/reset/');
       
-      // 2. Login automático
       const response = await api.post('/auth/login/', { 
         email: 'demo@pos.com', 
         password: 'demo123' 
       });
       
-      const { access, refresh, user } = response.data.data;
-      setAuth(user, access, refresh);
+      const { access, refresh, usuario } = response.data.data;
+      setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {
       setError('Error al iniciar la demo. Intente nuevamente.');
