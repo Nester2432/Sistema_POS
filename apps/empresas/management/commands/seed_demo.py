@@ -4,12 +4,15 @@ from django.utils import timezone
 from decimal import Decimal
 from apps.empresas.models import Empresa
 from apps.usuarios.models import Usuario, RolChoices
-from modules.inventario.models import Producto, Categoria, Proveedor, Marca
+from modules.inventario.models import Producto, Categoria, Proveedor, Marca, MovimientoStock
+from modules.ventas.models import Venta
+from modules.compras.models import Compra
+from modules.caja.models import CajaTurno, MovimientoCaja
+from modules.clientes.models import Cliente, CuentaCorriente, MovimientoCuentaCorriente
 from modules.clientes.services import crear_cliente_con_cuenta
-from modules.caja.services import abrir_caja, registrar_movimiento_caja
+from modules.caja.services import abrir_caja
 from modules.ventas.services import crear_venta_completa
 from modules.compras.services import crear_compra_completa
-from modules.caja.models import TipoMovimientoCaja
 
 class Command(BaseCommand):
     help = "Puebla la base de datos con datos de ElectroHogar Demo."
@@ -18,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write("Iniciando seed de ElectroHogar Demo...")
 
-        # 1. Crear o Limpiar Empresa Demo
+        # 1. Obtener o Crear Empresa Demo
         empresa, _ = Empresa.objects.update_or_create(
             documento_fiscal="DEMO-ELECTRO-001",
             defaults={
@@ -28,14 +31,28 @@ class Command(BaseCommand):
             }
         )
         
-        # Limpiar datos previos de esta empresa específica
+        # 2. LIMPIEZA PROFUNDA (Orden inverso de dependencias para evitar ProtectedError)
+        self.stdout.write("Limpiando datos previos de la demo...")
+        
+        # Primero movimientos y transacciones
+        Venta.objects.filter(empresa=empresa).delete()
+        Compra.objects.filter(empresa=empresa).delete()
+        MovimientoStock.objects.filter(empresa=empresa).delete()
+        MovimientoCuentaCorriente.objects.filter(empresa=empresa).delete()
+        MovimientoCaja.objects.filter(empresa=empresa).delete()
+        CajaTurno.objects.filter(empresa=empresa).delete()
+        
+        # Luego entidades maestras
         Producto.objects.filter(empresa=empresa).delete()
         Categoria.objects.filter(empresa=empresa).delete()
+        Marca.objects.filter(empresa=empresa).delete()
         Proveedor.objects.filter(empresa=empresa).delete()
-        # Nota: En un sistema real usaríamos el soft delete si fuera necesario, 
-        # pero para el reset de demo queremos limpieza total.
+        
+        # Clientes y Cuentas Corrientes
+        CuentaCorriente.objects.filter(empresa=empresa).delete()
+        Cliente.objects.filter(empresa=empresa).delete()
 
-        # 2. Crear Usuario Admin Demo
+        # 3. Crear Usuario Admin Demo
         user, created = Usuario.objects.get_or_create(
             email="admin@demo.com",
             defaults={
@@ -48,7 +65,7 @@ class Command(BaseCommand):
         user.set_password("demo123")
         user.save()
 
-        # 3. Categorías y Marcas
+        # 4. Categorías y Proveedores
         cats = {}
         for cat_name in ["Heladeras", "Lavarropas", "Cocinas", "Microondas", "Televisores", "Pequeños Electrodomésticos"]:
             cats[cat_name], _ = Categoria.objects.get_or_create(empresa=empresa, nombre=cat_name)
@@ -56,7 +73,7 @@ class Command(BaseCommand):
         prov_electra, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Distribuidora Electra S.A.", documento="30-11111111-9")
         prov_tech, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Tech Wholesale", documento="30-22222222-9")
 
-        # 4. Productos (15+)
+        # 5. Productos (15+)
         productos_data = [
             {"n": "Heladera Samsung No Frost 420L", "c": "Heladeras", "sku": "REF-SAM-420", "pc": 450000, "pv": 680000, "s": 10},
             {"n": "Heladera Whirlpool 390L", "c": "Heladeras", "sku": "REF-WHI-390", "pc": 410000, "pv": 590000, "s": 8},
@@ -91,7 +108,7 @@ class Command(BaseCommand):
             )
             prods_inst.append(prod)
 
-        # 5. Clientes
+        # 6. Clientes
         clientes = [
             {"n": "Consumidor", "a": "Final", "d": "99999999"},
             {"n": "Juan", "a": "Frecuente", "d": "20334455"},
@@ -103,18 +120,15 @@ class Command(BaseCommand):
         for c in clientes:
             clients_inst.append(crear_cliente_con_cuenta(empresa, user, nombre=c["n"], apellido=c["a"], documento=c["d"]))
 
-        # 6. Caja
+        # 7. Caja
         caja = abrir_caja(user, empresa, Decimal("150000.00"))
 
-        # 7. Ventas Iniciales
-        # Venta 1: Efectivo
+        # 8. Ventas Iniciales
         crear_venta_completa(user, empresa, [{"producto": prods_inst[4], "cantidad": 1}], "TICKET", "EFECTIVO", cliente=clients_inst[0])
-        # Venta 2: Tarjeta
         crear_venta_completa(user, empresa, [{"producto": prods_inst[11], "cantidad": 2}], "TICKET", "TARJETA", cliente=clients_inst[1])
-        # Venta 3: Cuenta Corriente (Deuda)
         crear_venta_completa(user, empresa, [{"producto": prods_inst[0], "cantidad": 1}], "FACTURA", "CUENTA_CORRIENTE", cliente=clients_inst[3])
 
-        # 8. Compras Iniciales
+        # 9. Compras Iniciales
         crear_compra_completa(user, empresa, prov_tech, [{"producto": prods_inst[12], "cantidad": 10, "precio_unitario": 22000}], "FACTURA", "0001-0000456", "EFECTIVO")
         crear_compra_completa(user, empresa, prov_electra, [{"producto": prods_inst[2], "cantidad": 5, "precio_unitario": 270000}], "FACTURA", "0002-0000123", "TRANSFERENCIA")
 
