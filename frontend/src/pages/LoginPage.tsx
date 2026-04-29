@@ -54,45 +54,46 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div className="p-8 bg-primary-600 text-white text-center">
-          <h1 className="text-3xl font-bold">Sistema_POS</h1>
-          <p className="mt-2 text-primary-100">Ingrese sus credenciales para continuar</p>
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+      <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden border border-white/10">
+        <div className="p-10 bg-primary-600 text-white text-center relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+          <h1 className="text-4xl font-black tracking-tighter">Sistema_POS</h1>
+          <p className="mt-2 text-primary-100 font-medium">Potencia tu negocio hoy</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-10 space-y-6">
           {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm border border-red-100">
+            <div className="bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm border border-rose-100 font-bold animate-in fade-in slide-in-from-top-2">
               {error}
             </div>
           )}
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Email</label>
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="email" 
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent border-2 focus:border-primary-500 rounded-2xl outline-none transition-all font-medium"
                 placeholder="admin@empresa.com"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-700">Contraseña</label>
+            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Contraseña</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
               <input 
                 type="password" 
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent border-2 focus:border-primary-500 rounded-2xl outline-none transition-all font-medium"
                 placeholder="••••••••"
               />
             </div>
@@ -101,23 +102,30 @@ export const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2"
+            className="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl active:scale-95 disabled:opacity-50"
           >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Iniciar Sesión'}
+            {loading ? <Loader2 className="animate-spin" size={20} /> : 'INICIAR SESIÓN'}
           </button>
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
-            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-slate-500">O prueba el sistema</span></div>
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest"><span className="bg-white px-4 text-slate-400">O pruébalo gratis</span></div>
           </div>
 
           <button
             type="button"
             onClick={handleDemo}
             disabled={loading}
-            className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white font-black py-5 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-2xl shadow-primary-200 active:scale-95 disabled:opacity-50 group"
           >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : 'Acceder con Usuario Demo'}
+            {loading ? <Loader2 className="animate-spin" size={24} /> : (
+              <>
+                <div className="p-1.5 bg-white/20 rounded-lg group-hover:rotate-12 transition-transform">
+                  <TrendingUp size={20} />
+                </div>
+                <span>INGRESAR A PRUEBA DEMO</span>
+              </>
+            )}
           </button>
         </form>
       </div>
