@@ -15,4 +15,7 @@ def reset_demo(request):
         call_command('seed_demo')
         return success_response(message="Datos demo reseteados correctamente.")
     except Exception as e:
-        return error_response(message=str(e))
+        import traceback
+        print(f"Error en reset_demo: {str(e)}")
+        traceback.print_exc()
+        return error_response(message=f"Error al resetear demo: {str(e)}")
