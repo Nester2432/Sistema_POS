@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { 
@@ -8,8 +8,8 @@ import {
   Download, 
   Edit, 
   Trash2, 
-  MoreVertical,
-  AlertCircle
+  AlertCircle,
+  Package
 } from 'lucide-react';
 
 export const InventoryPage = () => {
@@ -105,7 +105,7 @@ export const InventoryPage = () => {
                         {prod.stock_actual}
                       </span>
                       {prod.stock_actual <= prod.stock_minimo && (
-                        <AlertCircle size={14} className="text-amber-500" title="Bajo Stock" />
+                        <AlertCircle size={14} className="text-amber-500" />
                       )}
                     </div>
                   </td>

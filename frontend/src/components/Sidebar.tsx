@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -8,7 +7,6 @@ import {
   Wallet, 
   BarChart3, 
   Truck,
-  Settings,
   LogOut
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';

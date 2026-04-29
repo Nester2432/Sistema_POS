@@ -1,5 +1,4 @@
-import React from 'react';
-import { Bell, User, Search } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 export const Navbar = () => {
