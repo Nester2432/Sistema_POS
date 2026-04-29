@@ -29,7 +29,6 @@ services:
   - type: web
     name: sistema-pos-frontend
     env: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
