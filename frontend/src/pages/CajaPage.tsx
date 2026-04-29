@@ -180,7 +180,7 @@ export const CajaPage = () => {
         title={modalType === 'ABRIR' ? 'Apertura de Caja' : modalType === 'CERRAR' ? 'Cierre de Caja' : 'Movimiento de Caja'}
       >
         {modalType === 'ABRIR' && <AbrirCajaForm onSuccess={() => setModalType(null)} />}
-        {modalType === 'CERRAR' && <CerrarCajaForm onSuccess={() => setModalType(null)} saldoEstimado={saldoEstimado} />}
+        {modalType === 'CERRAR' && <CerrarCajaForm cajaId={caja.id} onSuccess={() => setModalType(null)} saldoEstimado={saldoEstimado} />}
         {(modalType === 'INGRESO' || modalType === 'EGRESO') && <MovimientoCajaForm onSuccess={() => setModalType(null)} tipo={modalType as any} />}
       </Modal>
     </div>
