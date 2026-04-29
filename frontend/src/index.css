@@ -51,5 +51,9 @@ body {
 }
 
 .glass-input {
-  @apply bg-slate-900 border-slate-800 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-all;
+  @apply bg-slate-900 border-slate-800 transition-all outline-none;
+}
+
+.glass-input:focus {
+  @apply border-primary-500 ring-1 ring-primary-500;
 }
