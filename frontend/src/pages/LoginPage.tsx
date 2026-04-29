@@ -35,19 +35,15 @@ export const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      // 1. Resetear datos demo (opcional pero recomendado para demo limpia)
-      await api.post('/demo/reset/');
-      
-      const response = await api.post('/auth/login/', { 
-        email: 'demo@pos.com', 
-        password: 'demo123' 
-      });
+      // 1. Resetear y obtener tokens directamente
+      const response = await api.post('/demo/reset/');
       
       const { access, refresh, usuario } = response.data.data;
       setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {
-      setError('Error al iniciar la demo. Intente nuevamente.');
+      console.error("Fallo al iniciar demo:", err);
+      setError('No se pudo iniciar la demo comercial. Intente nuevamente.');
     } finally {
       setLoading(false);
     }
