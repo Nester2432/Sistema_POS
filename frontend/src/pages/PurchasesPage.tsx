@@ -25,6 +25,7 @@ export const PurchasesPage = () => {
   });
 
   return (
+    <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
           <h2 className="text-4xl font-black text-white tracking-tighter uppercase tracking-tight">Gestión de Compras</h2>

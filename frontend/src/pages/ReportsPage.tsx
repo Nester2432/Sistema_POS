@@ -189,6 +189,5 @@ export const ReportsPage = () => {
         </div>
       </div>
     </div>
-    </div>
   );
 };
