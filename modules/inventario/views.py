@@ -53,6 +53,18 @@ class ProductoViewSet(BaseInventarioViewSet):
     def get_queryset(self):
         return get_productos_list(self.request.empresa_id)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            paginated_data = self.get_paginated_response(serializer.data).data
+            return success_response(data=paginated_data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return success_response(data={"results": serializer.data, "count": len(serializer.data)})
+
     @action(detail=True, methods=['post'], url_path='ajustar-stock')
     def ajustar_stock(self, request, pk=None):
         """POST /api/v1/productos/{id}/ajustar-stock/"""

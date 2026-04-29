@@ -19,11 +19,12 @@ export const InventoryPage = () => {
     queryKey: ['productos', searchTerm],
     queryFn: async () => {
       const response = await api.get(`/inventario/productos/?search=${searchTerm}`);
-      return response.data.data;
+      // Manejar tanto formato { data: { results: [] } } como { results: [] }
+      return response.data.data || response.data;
     }
   });
 
-  const products = data?.results || [];
+  const products = data?.results || (Array.isArray(data) ? data : []);
 
   return (
     <div className="space-y-6">
