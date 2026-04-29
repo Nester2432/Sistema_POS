@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
-import { Unlock, Lock, Save, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
+import { Unlock, Lock, Save, ArrowUpCircle, ArrowDownCircle, Loader2 } from 'lucide-react';
 
 interface FormProps {
   onSuccess: () => void;
@@ -27,7 +27,7 @@ export const AbrirCajaForm = ({ onSuccess }: FormProps) => {
         <p className="text-sm font-medium">Ingrese el saldo disponible en efectivo al momento de iniciar la jornada.</p>
       </div>
       <div className="space-y-2">
-        <label className="text-sm font-bold text-slate-700 uppercase">Saldo Inicial ($)</label>
+        <label className="text-sm font-bold text-slate-700 uppercase tracking-widest ml-1">Saldo Inicial ($)</label>
         <input 
           type="number"
           autoFocus
@@ -39,10 +39,10 @@ export const AbrirCajaForm = ({ onSuccess }: FormProps) => {
       <button 
         onClick={() => mutation.mutate({ saldo_inicial: saldo })}
         disabled={mutation.isPending}
-        className="w-full py-4 bg-primary-600 text-white rounded-2xl font-bold shadow-lg hover:bg-primary-700 transition-all flex items-center justify-center gap-2 active:scale-95"
+        className="w-full py-5 bg-primary-600 text-white rounded-2xl font-black shadow-xl shadow-primary-100 hover:bg-primary-700 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
       >
-        <Unlock size={20} />
-        ABRIR CAJA
+        {mutation.isPending ? <Loader2 className="animate-spin" size={24} /> : <Unlock size={24} />}
+        {mutation.isPending ? 'ABRIENDO...' : 'CONFIRMAR APERTURA'}
       </button>
     </div>
   );
@@ -69,20 +69,20 @@ export const MovimientoCajaForm = ({ onSuccess, tipo }: { onSuccess: () => void,
       </div>
       <div className="space-y-4">
         <div>
-          <label className="text-xs font-bold text-slate-400 uppercase">Concepto / Motivo</label>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Concepto / Motivo</label>
           <input 
             required
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none"
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-primary-500"
             value={formData.concepto}
             onChange={e => setFormData({ ...formData, concepto: e.target.value })}
             placeholder="Ej: Pago de flete, Aporte de socio..."
           />
         </div>
         <div>
-          <label className="text-xs font-bold text-slate-400 uppercase">Monto ($)</label>
+          <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Monto ($)</label>
           <input 
             type="number"
-            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xl font-bold outline-none"
+            className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xl font-bold outline-none focus:border-primary-500"
             value={formData.monto}
             onChange={e => setFormData({ ...formData, monto: Number(e.target.value) })}
           />
@@ -91,10 +91,10 @@ export const MovimientoCajaForm = ({ onSuccess, tipo }: { onSuccess: () => void,
       <button 
         onClick={() => mutation.mutate(formData)}
         disabled={mutation.isPending}
-        className={`w-full py-4 text-white rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 ${tipo === 'INGRESO' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
+        className={`w-full py-4 text-white rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 ${tipo === 'INGRESO' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
       >
-        <Save size={20} />
-        REGISTRAR {tipo}
+        {mutation.isPending ? <Loader2 className="animate-spin" /> : <Save size={20} />}
+        {mutation.isPending ? 'REGISTRANDO...' : `REGISTRAR ${tipo}`}
       </button>
     </div>
   );
@@ -118,12 +118,12 @@ export const CerrarCajaForm = ({ onSuccess, saldoEstimado }: { onSuccess: () => 
   return (
     <div className="space-y-6">
       <div className="p-4 bg-slate-900 text-white rounded-2xl space-y-2">
-        <p className="text-xs text-slate-400 uppercase font-bold">Saldo Estimado (Sistema)</p>
+        <p className="text-xs text-slate-400 uppercase font-bold tracking-widest">Saldo Estimado (Sistema)</p>
         <p className="text-2xl font-mono font-bold">${saldoEstimado.toFixed(2)}</p>
       </div>
 
       <div className="space-y-2">
-        <label className="text-sm font-bold text-slate-700 uppercase">Monto Contado en Caja ($)</label>
+        <label className="text-sm font-bold text-slate-700 uppercase tracking-widest ml-1">Monto Contado en Caja ($)</label>
         <input 
           type="number"
           autoFocus
@@ -143,10 +143,10 @@ export const CerrarCajaForm = ({ onSuccess, saldoEstimado }: { onSuccess: () => 
       <button 
         onClick={() => mutation.mutate({ saldo_final_declarado: saldoDeclarado })}
         disabled={mutation.isPending}
-        className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 active:scale-95"
+        className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
       >
-        <Lock size={20} />
-        CERRAR CAJA Y TERMINAR TURNO
+        {mutation.isPending ? <Loader2 className="animate-spin" /> : <Lock size={20} />}
+        {mutation.isPending ? 'CERRANDO...' : 'CERRAR CAJA Y TERMINAR TURNO'}
       </button>
     </div>
   );
