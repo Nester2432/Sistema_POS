@@ -4,9 +4,16 @@ import { Navbar } from '../components/Navbar';
 import { useAuthStore } from '../store/authStore';
 
 export const MainLayout = () => {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const { token, _hasHydrated } = useAuthStore();
 
-  if (!isAuthenticated) {
+  // Si no ha cargado el estado de localStorage, esperamos
+  if (!_hasHydrated) {
+    return <div className="min-h-screen flex items-center justify-center">Cargando sesión...</div>;
+  }
+
+  // Si ya cargó y no hay token, al login
+  if (!token) {
+    console.log("Acceso denegado: No hay token activo.");
     return <Navigate to="/login" replace />;
   }
 

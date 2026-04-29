@@ -18,13 +18,13 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
-  { icon: ShoppingCart, label: 'Punto de Venta', path: '/pos' },
-  { icon: Package, label: 'Inventario', path: '/inventario' },
-  { icon: Wallet, label: 'Caja', path: '/caja' },
-  { icon: Truck, label: 'Compras', path: '/compras' },
-  { icon: Users, label: 'Clientes', path: '/clientes' },
-  { icon: BarChart3, label: 'Reportes', path: '/reportes' },
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/app' },
+  { icon: ShoppingCart, label: 'Punto de Venta', path: '/app/pos' },
+  { icon: Package, label: 'Inventario', path: '/app/inventario' },
+  { icon: Wallet, label: 'Caja', path: '/app/caja' },
+  { icon: Truck, label: 'Compras', path: '/app/compras' },
+  { icon: Users, label: 'Clientes', path: '/app/clientes' },
+  { icon: BarChart3, label: 'Reportes', path: '/app/reportes' },
 ];
 
 export const Sidebar = () => {
