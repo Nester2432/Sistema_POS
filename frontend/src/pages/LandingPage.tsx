@@ -8,7 +8,8 @@ import {
   ArrowRight,
   Sparkles,
   Zap,
-  Globe
+  Globe,
+  BarChart3
 } from 'lucide-react';
 
 const BenefitCard = ({ icon: Icon, title, desc }: any) => (

@@ -9,7 +9,9 @@ import {
   Lock, 
   Unlock,
   History,
-  AlertCircle
+  AlertCircle,
+  Plus,
+  Minus
 } from 'lucide-react';
 
 export const CajaPage = () => {

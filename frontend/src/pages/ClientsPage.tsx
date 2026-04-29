@@ -8,10 +8,10 @@ import {
   Search, 
   User as UserIcon, 
   Mail, 
-  Phone, 
-  CreditCard,
+  Phone,
   Edit,
-  Trash2
+  Trash2,
+  Loader2
 } from 'lucide-react';
 
 export const ClientsPage = () => {
