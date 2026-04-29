@@ -35,8 +35,8 @@ def reset_demo(request):
         
         # 3. Generar Tokens
         refresh = RefreshToken.for_user(user)
-        # Inyectar claims manuales que el serializer normal inyecta en el login
-        # (Aunque el store del front extrae del cuerpo de respuesta, es buena práctica)
+        # INYECTAR empresa_id explícitamente para el Middleware
+        refresh['empresa_id'] = str(user.empresa_id)
         
         data = {
             "access": str(refresh.access_token),
