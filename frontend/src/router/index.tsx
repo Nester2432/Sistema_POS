@@ -4,6 +4,9 @@ import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
 import { POSPage } from '../pages/POSPage';
 import { InventoryPage } from '../pages/InventoryPage';
+import { ClientsPage } from '../pages/ClientsPage';
+import { CajaPage } from '../pages/CajaPage';
+import { PurchasesPage } from '../pages/PurchasesPage';
 import { MainLayout } from '../layouts/MainLayout';
 
 // Componentes temporales para las rutas que implementaremos luego
@@ -30,9 +33,9 @@ const router = createBrowserRouter([
       { index: true, element: <DashboardPage /> },
       { path: 'pos', element: <POSPage /> },
       { path: 'inventario', element: <InventoryPage /> },
-      { path: 'caja', element: <Placeholder name="Caja" /> },
-      { path: 'compras', element: <Placeholder name="Compras" /> },
-      { path: 'clientes', element: <Placeholder name="Clientes" /> },
+      { path: 'caja', element: <CajaPage /> },
+      { path: 'compras', element: <PurchasesPage /> },
+      { path: 'clientes', element: <ClientsPage /> },
       { path: 'reportes', element: <Placeholder name="Reportes" /> },
     ],
   },
