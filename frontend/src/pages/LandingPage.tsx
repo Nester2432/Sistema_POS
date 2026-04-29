@@ -5,8 +5,7 @@ import {
   Package, 
   Wallet, 
   Users, 
-  ArrowRight,
-  Play
+  ArrowRight
 } from 'lucide-react';
 
 const BenefitCard = ({ icon: Icon, title, desc }: any) => (
