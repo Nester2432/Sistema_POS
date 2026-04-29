@@ -68,7 +68,7 @@ class Producto(TenantModel):
     nombre = models.CharField(max_length=255, db_index=True, verbose_name="Nombre del producto")
     descripcion = models.TextField(blank=True, verbose_name="Descripción")
     sku = models.CharField(max_length=50, db_index=True, blank=True, verbose_name="SKU / Código interno")
-    codigo_barras = models.CharField(max_length=100, db_index=True, blank=True, verbose_name="Código de barras")
+    codigo_barras = models.CharField(max_length=100, db_index=True, blank=True, null=True, verbose_name="Código de barras")
     
     precio_costo = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"), validators=[MinValueValidator(Decimal("0.00"))])
     precio_venta = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"), validators=[MinValueValidator(Decimal("0.00"))])

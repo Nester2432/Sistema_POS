@@ -43,18 +43,23 @@ class Command(BaseCommand):
         prov, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Distribuidora Central", documento="20123")
 
         prods_data = [
-            {"nombre": "Coca Cola 500ml", "sku": "BEB-01", "pc": 1.5, "pv": 2.5, "stock": 50, "cat": cat_bebidas},
-            {"nombre": "Hamburgesa Simple", "sku": "COM-01", "pc": 4.0, "pv": 8.0, "stock": 20, "cat": cat_comida},
-            {"nombre": "Agua Mineral 1L", "sku": "BEB-02", "pc": 1.0, "pv": 1.8, "stock": 100, "cat": cat_bebidas},
-            {"nombre": "Papas Fritas", "sku": "COM-02", "pc": 2.0, "pv": 4.5, "stock": 30, "cat": cat_comida},
+            {"nombre": "Coca Cola 500ml", "sku": "BEB-01", "cb": "7790001001", "pc": 1.5, "pv": 2.5, "stock": 50, "cat": cat_bebidas},
+            {"nombre": "Hamburgesa Simple", "sku": "COM-01", "cb": "7790001002", "pc": 4.0, "pv": 8.0, "stock": 20, "cat": cat_comida},
+            {"nombre": "Agua Mineral 1L", "sku": "BEB-02", "cb": "7790001003", "pc": 1.0, "pv": 1.8, "stock": 100, "cat": cat_bebidas},
+            {"nombre": "Papas Fritas", "sku": "COM-02", "cb": "7790001004", "pc": 2.0, "pv": 4.5, "stock": 30, "cat": cat_comida},
         ]
 
         for p in prods_data:
             Producto.objects.update_or_create(
                 empresa=empresa, sku=p["sku"],
                 defaults={
-                    "nombre": p["nombre"], "precio_costo": Decimal(str(p["pc"])), "precio_venta": Decimal(str(p["pv"])),
-                    "stock_actual": p["stock"], "categoria": p["cat"], "proveedor": prov
+                    "nombre": p["nombre"], 
+                    "codigo_barras": p["cb"],
+                    "precio_costo": Decimal(str(p["pc"])), 
+                    "precio_venta": Decimal(str(p["pv"])),
+                    "stock_actual": p["stock"], 
+                    "categoria": p["cat"], 
+                    "proveedor": prov
                 }
             )
 
