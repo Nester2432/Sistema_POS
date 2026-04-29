@@ -15,7 +15,7 @@ export const AbrirCajaForm = ({ onSuccess }: FormProps) => {
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/caja/abrir/', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['caja-actual'] });
+      queryClient.invalidateQueries({ queryKey: ['caja-mi-caja'] });
       onSuccess();
     }
   });
@@ -60,7 +60,7 @@ export const MovimientoCajaForm = ({ onSuccess, tipo }: { onSuccess: () => void,
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/caja/movimiento-manual/', { ...data, tipo }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['caja-actual'] });
+      queryClient.invalidateQueries({ queryKey: ['caja-mi-caja'] });
       onSuccess();
     }
   });
@@ -116,7 +116,7 @@ export const CerrarCajaForm = ({ onSuccess, saldoEstimado }: { onSuccess: () => 
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/caja/cerrar/', data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['caja-actual'] });
+      queryClient.invalidateQueries({ queryKey: ['caja-mi-caja'] });
       onSuccess();
     }
   });

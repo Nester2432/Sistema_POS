@@ -16,9 +16,9 @@ export const CajaPage = () => {
   const [modalType, setModalType] = useState<string | null>(null);
 
   const { data: caja, isLoading } = useQuery({
-    queryKey: ['caja-actual'],
+    queryKey: ['caja-mi-caja'],
     queryFn: async () => {
-      const response = await api.get('/caja/actual/');
+      const response = await api.get('/caja/mi-caja/');
       return response.data.data;
     }
   });

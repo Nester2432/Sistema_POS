@@ -29,9 +29,9 @@ export const POSPage = () => {
 
   // 1. Verificar Estado de Caja
   const { data: caja } = useQuery({
-    queryKey: ['caja-actual'],
+    queryKey: ['caja-mi-caja'],
     queryFn: async () => {
-      const res = await api.get('/caja/actual/');
+      const res = await api.get('/caja/mi-caja/');
       return res.data.data;
     }
   });
