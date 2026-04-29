@@ -4,7 +4,6 @@ import api from '../api/axios';
 import { Modal } from '../components/Modal';
 import { AbrirCajaForm, CerrarCajaForm, MovimientoCajaForm } from '../components/CajaForms';
 import { 
-  Wallet, 
   ArrowUpCircle, 
   ArrowDownCircle, 
   Lock, 

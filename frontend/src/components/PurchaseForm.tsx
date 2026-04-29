@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
-import { Save, Plus, Trash2, Package } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const queryClient = useQueryClient();
@@ -91,6 +91,18 @@ export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
             onChange={e => setNroFactura(e.target.value)}
             placeholder="0001-00001234"
           />
+        </div>
+        <div className="space-y-2 col-span-full">
+          <label className="text-xs font-bold text-slate-400 uppercase">Método de Pago</label>
+          <select 
+            className="w-full p-3 bg-slate-50 border rounded-xl outline-none"
+            value={metodoPago}
+            onChange={e => setMetodoPago(e.target.value)}
+          >
+            <option value="EFECTIVO">Efectivo</option>
+            <option value="TRANSFERENCIA">Transferencia</option>
+            <option value="TARJETA">Tarjeta</option>
+          </select>
         </div>
       </div>
 

@@ -131,7 +131,7 @@ export const POSPage = () => {
             <input 
               type="text" 
               value={search}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar producto por nombre o SKU..." 
               className="w-full pl-12 pr-4 py-4 bg-slate-50 border-transparent focus:bg-white focus:ring-2 focus:ring-primary-500 rounded-xl outline-none text-lg transition-all"
             />

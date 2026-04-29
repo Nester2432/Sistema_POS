@@ -4,7 +4,6 @@ import api from '../api/axios';
 import { Modal } from '../components/Modal';
 import { PurchaseForm } from '../components/PurchaseForm';
 import { 
-  ShoppingBag, 
   Plus, 
   Search, 
   Truck, 
