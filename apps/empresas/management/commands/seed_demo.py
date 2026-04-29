@@ -7,7 +7,7 @@ from apps.usuarios.models import Usuario, RolChoices
 from modules.inventario.models import Producto, Categoria, Proveedor, Marca, MovimientoStock
 from modules.ventas.models import Venta
 from modules.compras.models import Compra
-from modules.caja.models import CajaTurno, MovimientoCaja
+from modules.caja.models import Caja, MovimientoCaja
 from modules.clientes.models import Cliente, CuentaCorriente, MovimientoCuentaCorriente
 from modules.clientes.services import crear_cliente_con_cuenta
 from modules.caja.services import abrir_caja
@@ -31,24 +31,20 @@ class Command(BaseCommand):
             }
         )
         
-        # 2. LIMPIEZA PROFUNDA (Orden inverso de dependencias para evitar ProtectedError)
-        self.stdout.write("Limpiando datos previos de la demo...")
-        
-        # Primero movimientos y transacciones
+        # 2. LIMPIEZA PROFUNDA
+        self.stdout.write("Limpiando transacciones y movimientos...")
         Venta.objects.filter(empresa=empresa).delete()
         Compra.objects.filter(empresa=empresa).delete()
         MovimientoStock.objects.filter(empresa=empresa).delete()
         MovimientoCuentaCorriente.objects.filter(empresa=empresa).delete()
         MovimientoCaja.objects.filter(empresa=empresa).delete()
-        CajaTurno.objects.filter(empresa=empresa).delete()
+        Caja.objects.filter(empresa=empresa).delete()
         
-        # Luego entidades maestras
+        self.stdout.write("Limpiando maestros (productos, clientes, proveedores)...")
         Producto.objects.filter(empresa=empresa).delete()
         Categoria.objects.filter(empresa=empresa).delete()
         Marca.objects.filter(empresa=empresa).delete()
         Proveedor.objects.filter(empresa=empresa).delete()
-        
-        # Clientes y Cuentas Corrientes
         CuentaCorriente.objects.filter(empresa=empresa).delete()
         Cliente.objects.filter(empresa=empresa).delete()
 
@@ -65,7 +61,7 @@ class Command(BaseCommand):
         user.set_password("demo123")
         user.save()
 
-        # 4. Categorías y Proveedores
+        # 4. Maestros
         cats = {}
         for cat_name in ["Heladeras", "Lavarropas", "Cocinas", "Microondas", "Televisores", "Pequeños Electrodomésticos"]:
             cats[cat_name], _ = Categoria.objects.get_or_create(empresa=empresa, nombre=cat_name)
@@ -73,7 +69,7 @@ class Command(BaseCommand):
         prov_electra, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Distribuidora Electra S.A.", documento="30-11111111-9")
         prov_tech, _ = Proveedor.objects.get_or_create(empresa=empresa, nombre="Tech Wholesale", documento="30-22222222-9")
 
-        # 5. Productos (15+)
+        # 5. Productos
         productos_data = [
             {"n": "Heladera Samsung No Frost 420L", "c": "Heladeras", "sku": "REF-SAM-420", "pc": 450000, "pv": 680000, "s": 10},
             {"n": "Heladera Whirlpool 390L", "c": "Heladeras", "sku": "REF-WHI-390", "pc": 410000, "pv": 590000, "s": 8},
@@ -103,7 +99,7 @@ class Command(BaseCommand):
                 precio_venta=Decimal(str(p["pv"])),
                 stock_actual=Decimal(str(p["s"])),
                 stock_minimo=Decimal("2"),
-                categoria=cats[p.get("c", "Pequeños Electrodomésticos")],
+                categoria=cats[p["c"]],
                 proveedor=prov_electra if p["pc"] > 100000 else prov_tech
             )
             prods_inst.append(prod)
@@ -123,12 +119,12 @@ class Command(BaseCommand):
         # 7. Caja
         caja = abrir_caja(user, empresa, Decimal("150000.00"))
 
-        # 8. Ventas Iniciales
+        # 8. Ventas e Ingresos
         crear_venta_completa(user, empresa, [{"producto": prods_inst[4], "cantidad": 1}], "TICKET", "EFECTIVO", cliente=clients_inst[0])
         crear_venta_completa(user, empresa, [{"producto": prods_inst[11], "cantidad": 2}], "TICKET", "TARJETA", cliente=clients_inst[1])
         crear_venta_completa(user, empresa, [{"producto": prods_inst[0], "cantidad": 1}], "FACTURA", "CUENTA_CORRIENTE", cliente=clients_inst[3])
 
-        # 9. Compras Iniciales
+        # 9. Compras
         crear_compra_completa(user, empresa, prov_tech, [{"producto": prods_inst[12], "cantidad": 10, "precio_unitario": 22000}], "FACTURA", "0001-0000456", "EFECTIVO")
         crear_compra_completa(user, empresa, prov_electra, [{"producto": prods_inst[2], "cantidad": 5, "precio_unitario": 270000}], "FACTURA", "0002-0000123", "TRANSFERENCIA")
 
