@@ -170,14 +170,14 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
         <button
           type="button"
           onClick={onSuccess}
-          className="px-6 py-3 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all"
+          className="px-6 py-3 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all active:scale-95"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-200 hover:bg-primary-700 transition-all disabled:bg-slate-300"
+          className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-100 hover:bg-primary-700 transition-all disabled:bg-slate-300 active:scale-95"
         >
           {mutation.isPending ? <Loader2 className="animate-spin" /> : <Save size={20} />}
           {initialData?.id ? 'Actualizar Producto' : 'Guardar Producto'}

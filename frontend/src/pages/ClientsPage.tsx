@@ -38,7 +38,7 @@ export const ClientsPage = () => {
         </div>
         <button 
           onClick={() => { setSelectedClient(null); setIsModalOpen(true); }}
-          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-all shadow-md shadow-primary-100"
+          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-100 active:scale-95"
         >
           <Plus size={18} />
           Nuevo Cliente

@@ -103,7 +103,7 @@ export const ReportsPage = () => {
               <PieChart className="text-primary-600" />
               <h3 className="text-xl font-bold text-slate-900">Métodos de Pago</h3>
             </div>
-            <button className="p-2 text-slate-400 hover:text-primary-600 transition-colors">
+            <button className="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-xl transition-all active:scale-90">
               <Download size={20} />
             </button>
           </div>

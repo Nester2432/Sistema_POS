@@ -39,7 +39,7 @@ export const AbrirCajaForm = ({ onSuccess }: FormProps) => {
       <button 
         onClick={() => mutation.mutate({ saldo_inicial: saldo })}
         disabled={mutation.isPending}
-        className="w-full py-4 bg-primary-600 text-white rounded-2xl font-bold shadow-lg hover:bg-primary-700 transition-all flex items-center justify-center gap-2"
+        className="w-full py-4 bg-primary-600 text-white rounded-2xl font-bold shadow-lg hover:bg-primary-700 transition-all flex items-center justify-center gap-2 active:scale-95"
       >
         <Unlock size={20} />
         ABRIR CAJA
@@ -91,7 +91,7 @@ export const MovimientoCajaForm = ({ onSuccess, tipo }: { onSuccess: () => void,
       <button 
         onClick={() => mutation.mutate(formData)}
         disabled={mutation.isPending}
-        className={`w-full py-4 text-white rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 ${tipo === 'INGRESO' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
+        className={`w-full py-4 text-white rounded-2xl font-bold shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 ${tipo === 'INGRESO' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
       >
         <Save size={20} />
         REGISTRAR {tipo}
@@ -143,7 +143,7 @@ export const CerrarCajaForm = ({ onSuccess, saldoEstimado }: { onSuccess: () => 
       <button 
         onClick={() => mutation.mutate({ saldo_final_declarado: saldoDeclarado })}
         disabled={mutation.isPending}
-        className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+        className="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-lg hover:bg-slate-800 transition-all flex items-center justify-center gap-2 active:scale-95"
       >
         <Lock size={20} />
         CERRAR CAJA Y TERMINAR TURNO
