@@ -48,8 +48,8 @@ class Command(BaseCommand):
         CuentaCorriente.objects.filter(empresa=empresa).delete()
         Cliente.objects.filter(empresa=empresa).delete()
 
-        # 3. Crear Usuario Admin Demo
-        user, created = Usuario.objects.get_or_create(
+        # 3. Crear o Actualizar Usuario Admin Demo
+        user, _ = Usuario.objects.update_or_create(
             email="admin@demo.com",
             defaults={
                 "nombre": "Admin Demo",
