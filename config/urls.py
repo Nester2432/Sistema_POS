@@ -6,6 +6,7 @@ Enrutador principal. Prefija todas las APIs con /api/v1/.
 from django.contrib import admin
 from django.urls import path, include
 from apps.empresas.views_demo import reset_demo
+from apps.usuarios.views_debug import debug_session
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -13,8 +14,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     # ─── Auth / Usuarios ──────────────────────────────────────
-    path("api/v1/auth/", include("apps.usuarios.urls", namespace="auth")),
-    path("api/v1/demo/reset/", reset_demo, name="reset-demo"),
+    path('api/v1/auth/', include('apps.usuarios.urls')),
+    path('api/v1/debug-session/', debug_session, name='debug-session'),
+    path('api/v1/demo/reset/', reset_demo, name='reset-demo'),
 
     # ─── Empresas ─────────────────────────────────────────────
     path("api/v1/empresas/", include("apps.empresas.urls", namespace="empresas")),
