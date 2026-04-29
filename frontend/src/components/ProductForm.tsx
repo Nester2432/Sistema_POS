@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../api/axios';
-import { Save, Loader2 } from 'lucide-react';
+import { Loader2, ArrowRight } from 'lucide-react';
 
 interface ProductFormProps {
   onSuccess: () => void;
@@ -23,7 +23,6 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
     activo: initialData?.activo ?? true,
   });
 
-  // Cargar Categorías y Proveedores
   const { data: categorias = [] } = useQuery({
     queryKey: ['categorias'],
     queryFn: async () => {
@@ -170,17 +169,23 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
         <button
           type="button"
           onClick={onSuccess}
-          className="px-6 py-3 text-slate-600 font-bold hover:bg-slate-100 rounded-xl transition-all active:scale-95"
+          className="px-6 py-3 text-slate-500 font-bold hover:text-slate-700 transition-colors active:scale-95"
         >
           Cancelar
         </button>
         <button
           type="submit"
           disabled={mutation.isPending}
-          className="flex items-center gap-2 px-8 py-3 bg-primary-600 text-white font-bold rounded-xl shadow-lg shadow-primary-100 hover:bg-primary-700 transition-all disabled:bg-slate-300 active:scale-95"
+          className="flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 text-slate-900 font-bold rounded-xl shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all disabled:opacity-50 active:scale-95 group"
         >
-          {mutation.isPending ? <Loader2 className="animate-spin" /> : <Save size={20} />}
-          {initialData?.id ? 'Actualizar Producto' : 'Guardar Producto'}
+          {mutation.isPending ? (
+            <Loader2 className="animate-spin" size={20} />
+          ) : (
+            <>
+              <span>{initialData?.id ? 'Actualizar Producto' : 'Guardar Producto'}</span>
+              <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+            </>
+          )}
         </button>
       </div>
     </form>

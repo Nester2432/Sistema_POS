@@ -37,16 +37,16 @@ export const InventoryPage = () => {
           <p className="text-slate-500">Gestione sus productos y niveles de stock</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all active:scale-95">
+          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all active:scale-95">
             <Download size={18} />
             Exportar
           </button>
           <button 
             onClick={() => { setSelectedProduct(null); setIsModalOpen(true); }}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl text-sm font-bold hover:bg-primary-700 transition-all shadow-lg shadow-primary-100 active:scale-95"
+            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95 group"
           >
-            <Plus size={18} />
-            Nuevo Producto
+            <Plus size={18} className="text-primary-600 group-hover:rotate-90 transition-transform" />
+            <span>Nuevo Producto</span>
           </button>
         </div>
       </div>
