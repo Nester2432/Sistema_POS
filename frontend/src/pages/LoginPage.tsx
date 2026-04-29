@@ -39,6 +39,10 @@ export const LoginPage = () => {
       const response = await api.post('/demo/reset/');
       
       const { access, refresh, usuario } = response.data.data;
+      
+      // Limpiar rastro de sesiones previas antes de iniciar la nueva demo
+      localStorage.clear();
+      
       setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {

@@ -104,6 +104,8 @@ class Command(BaseCommand):
             )
             prods_inst.append(prod)
 
+        self.stdout.write(f"Creados {len(prods_inst)} productos para {empresa.nombre}")
+
         # 6. Clientes
         clientes = [
             {"n": "Consumidor", "a": "Final", "d": "99999999"},
