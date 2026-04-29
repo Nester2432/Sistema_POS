@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { 
-  Users, 
   Plus, 
   Search, 
   Phone, 
   Mail, 
   CreditCard,
-  MoreVertical,
   ChevronRight
 } from 'lucide-react';
 

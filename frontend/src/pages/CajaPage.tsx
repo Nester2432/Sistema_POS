@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { 
@@ -8,12 +7,11 @@ import {
   Lock, 
   Unlock,
   History,
-  AlertCircle,
-  Plus
+  AlertCircle
 } from 'lucide-react';
 
 export const CajaPage = () => {
-  const { data: caja, isLoading, refetch } = useQuery({
+  const { data: caja, isLoading } = useQuery({
     queryKey: ['caja-actual'],
     queryFn: async () => {
       const response = await api.get('/caja/actual/');

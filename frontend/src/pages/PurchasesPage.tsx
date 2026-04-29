@@ -6,14 +6,11 @@ import {
   Plus, 
   Search, 
   Calendar, 
-  Package, 
-  CheckCircle2,
-  AlertTriangle,
   ChevronRight
 } from 'lucide-react';
 
 export const PurchasesPage = () => {
-  const [search, setSearch] = useState('');
+  const [search] = useState('');
 
   const { data, isLoading } = useQuery({
     queryKey: ['compras', search],
