@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import api from '../api/axios';
-import { Mail, Lock, Loader2, TrendingUp } from 'lucide-react';
+import { Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,7 +21,6 @@ export const LoginPage = () => {
     try {
       const response = await api.post('/auth/login/', { email, password });
       const { access, refresh, usuario } = response.data.data;
-      
       setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {
@@ -35,18 +34,12 @@ export const LoginPage = () => {
     setLoading(true);
     setError('');
     try {
-      // 1. Resetear y obtener tokens directamente
       const response = await api.post('/demo/reset/');
-      
       const { access, refresh, usuario } = response.data.data;
-      
-      // Limpiar rastro de sesiones previas antes de iniciar la nueva demo
       localStorage.clear();
-      
       setAuth(usuario, access, refresh);
       navigate('/app');
     } catch (err: any) {
-      console.error("Fallo al iniciar demo:", err);
       setError('No se pudo iniciar la demo comercial. Intente nuevamente.');
     } finally {
       setLoading(false);
@@ -64,7 +57,7 @@ export const LoginPage = () => {
         
         <form onSubmit={handleSubmit} className="p-10 space-y-6">
           {error && (
-            <div className="bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm border border-rose-100 font-bold animate-in fade-in slide-in-from-top-2">
+            <div className="bg-rose-50 text-rose-600 p-4 rounded-2xl text-sm border border-rose-100 font-bold">
               {error}
             </div>
           )}
@@ -99,34 +92,35 @@ export const LoginPage = () => {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-xl active:scale-95 disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : 'INICIAR SESIÓN'}
-          </button>
+          <div className="flex flex-col gap-4">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg active:scale-95 disabled:opacity-50"
+            >
+              {loading ? <Loader2 className="animate-spin" size={20} /> : 'INICIAR SESIÓN'}
+            </button>
 
-          <div className="relative my-8">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100"></div></div>
-            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-widest"><span className="bg-white px-4 text-slate-400">O pruébalo gratis</span></div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={handleDemo}
+                disabled={loading}
+                className="flex-1 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95 group"
+              >
+                <span className="text-sm">Probar demo</span>
+                <ArrowRight size={16} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                type="button"
+                className="flex-1 bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-sm active:scale-95 group"
+              >
+                <span className="text-sm">Solicitar acceso</span>
+                <ArrowRight size={16} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
           </div>
-
-          <button
-            type="button"
-            onClick={handleDemo}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700 text-white font-black py-5 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-2xl shadow-primary-200 active:scale-95 disabled:opacity-50 group"
-          >
-            {loading ? <Loader2 className="animate-spin" size={24} /> : (
-              <>
-                <div className="p-1.5 bg-white/20 rounded-lg group-hover:rotate-12 transition-transform">
-                  <TrendingUp size={20} />
-                </div>
-                <span>INGRESAR A PRUEBA DEMO</span>
-              </>
-            )}
-          </button>
         </form>
       </div>
     </div>
