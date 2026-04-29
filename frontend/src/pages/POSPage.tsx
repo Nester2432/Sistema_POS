@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { Modal } from '../components/Modal';
 import { 
@@ -12,7 +13,8 @@ import {
   Package,
   ShoppingCart,
   AlertTriangle,
-  Receipt
+  Receipt,
+  ArrowRight
 } from 'lucide-react';
 
 export const POSPage = () => {
@@ -108,15 +110,21 @@ export const POSPage = () => {
 
   if (!caja) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center p-8">
-        <div className="p-6 bg-amber-50 rounded-full text-amber-500 mb-6">
-          <AlertTriangle size={64} />
+      <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-white/50 backdrop-blur-sm rounded-[3rem] border border-slate-100">
+        <div className="p-8 bg-amber-50 rounded-full text-amber-500 mb-8 animate-pulse">
+          <AlertTriangle size={80} />
         </div>
-        <h2 className="text-3xl font-bold text-slate-900 mb-2">Caja Cerrada</h2>
-        <p className="text-slate-500 max-w-md mb-8">Debes abrir un turno de caja antes de poder realizar ventas en el sistema.</p>
-        <a href="/app/caja" className="px-8 py-3 bg-primary-600 text-white font-bold rounded-2xl shadow-lg hover:bg-primary-700 transition-all">
-          Ir a Gestión de Caja
-        </a>
+        <h2 className="text-4xl font-black text-slate-900 mb-4 tracking-tighter">Caja Cerrada</h2>
+        <p className="text-slate-500 max-w-md mb-10 text-lg font-medium leading-relaxed">
+          Debes abrir un turno de caja antes de poder realizar ventas. Es necesario para el control de arqueo y seguridad.
+        </p>
+        <Link 
+          to="/app/caja" 
+          className="px-10 py-5 bg-white text-slate-900 border border-slate-200 rounded-[1.5rem] font-bold text-xl hover:bg-slate-50 hover:border-slate-300 shadow-sm transition-all active:scale-95 flex items-center gap-3 group"
+        >
+          <span>Gestionar Caja</span>
+          <ArrowRight size={24} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+        </Link>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { 
   TrendingUp, 
@@ -6,7 +7,9 @@ import {
   Package, 
   AlertTriangle,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  ArrowRight,
+  Download
 } from 'lucide-react';
 
 const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
@@ -50,16 +53,18 @@ export const DashboardPage = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Bienvenido de nuevo</h2>
-          <p className="text-slate-500">Resumen operativo de hoy</p>
+          <h2 className="text-3xl font-black text-slate-900 tracking-tight">Bienvenido de nuevo</h2>
+          <p className="text-slate-500 font-medium">Resumen operativo de hoy</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50">
-            Exportar reporte
+          <button className="px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-slate-50 transition-all active:scale-95 flex items-center gap-2">
+            <Download size={18} />
+            Exportar
           </button>
-          <button className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700">
-            Nueva Venta
-          </button>
+          <Link to="/app/pos" className="px-5 py-2.5 bg-white border border-slate-200 text-slate-900 rounded-xl text-sm font-bold hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm active:scale-95 flex items-center gap-2 group">
+            <span>Nueva Venta</span>
+            <ArrowRight size={18} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
 
