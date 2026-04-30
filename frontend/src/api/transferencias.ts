@@ -1,5 +1,5 @@
 import api from './axios';
-import { Transferencia, TransferenciaCreatePayload } from '../types/transferencias';
+import type { Transferencia, TransferenciaCreatePayload } from '../types/transferencias';
 
 export const transferenciasApi = {
   getAll: async (): Promise<Transferencia[]> => {

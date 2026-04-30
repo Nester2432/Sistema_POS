@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Store, ChevronDown } from 'lucide-react';
-import { useSucursalStore, Sucursal } from '../store/sucursalStore';
+import { useSucursalStore } from '../store/sucursalStore';
+import type { Sucursal } from '../store/sucursalStore';
 import toast from 'react-hot-toast';
 
 export const SucursalSelector = () => {

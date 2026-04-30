@@ -7,7 +7,8 @@ import {
   Wallet, 
   Truck,
   ArrowRightLeft,
-  LogOut
+  LogOut,
+  BarChart3
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { SucursalSelector } from './SucursalSelector';

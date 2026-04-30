@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Save, Trash2, Search, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Search, AlertCircle, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 import { transferenciasApi } from '../../api/transferencias';

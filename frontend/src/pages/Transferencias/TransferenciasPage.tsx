@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, ArrowRightLeft, CheckCircle2, XCircle, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { transferenciasApi } from '../../api/transferencias';
-import { Transferencia, EstadoTransferencia } from '../../types/transferencias';
+import type { Transferencia, EstadoTransferencia } from '../../types/transferencias';
 import dayjs from 'dayjs';
 
 const getEstadoBadge = (estado: EstadoTransferencia) => {
@@ -45,7 +45,7 @@ export const TransferenciasPage = () => {
       toast.success('Transferencia cancelada.');
       queryClient.invalidateQueries({ queryKey: ['transferencias'] });
     },
-    onError: (error: any) => {
+    onError: () => {
       toast.error('Error al cancelar la transferencia.');
     }
   });
