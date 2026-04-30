@@ -40,10 +40,11 @@ export const useSucursalStore = create<SucursalState>()(
         set({ cargando: true });
         try {
           const response = await api.get('/sucursales/');
-          // La API pagina: {count, results:[]}. Extraemos el array.
-          const sucursalesData: Sucursal[] = Array.isArray(response.data)
-            ? response.data
-            : (response.data.results ?? []);
+          // El backend envuelve: {data: {count, results:[]}} 
+          const payload = response.data?.data;
+          const sucursalesData: Sucursal[] = Array.isArray(payload)
+            ? payload
+            : (payload?.results ?? []);
           
           // Solo guardamos las activas en el store
           const activas = sucursalesData.filter((s: Sucursal) => s.activo);

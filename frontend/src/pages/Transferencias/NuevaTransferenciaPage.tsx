@@ -29,18 +29,20 @@ export const NuevaTransferenciaPage = () => {
   const [items, setItems] = useState<ProductoSeleccionado[]>([]);
 
   // Buscar productos (usamos el listado normal)
-  const { data: productos } = useQuery({
+  const { data: productosRaw } = useQuery({
     queryKey: ['productos'],
     queryFn: async () => {
       const { data } = await api.get('/inventario/productos/');
-      return data;
+      // Backend envuelve: {data: {count, results:[]}}
+      const payload = data?.data;
+      return Array.isArray(payload) ? payload : (payload?.results ?? []);
     }
   });
 
-  const productosFiltrados = productos?.filter((p: any) => 
-    p.nombre.toLowerCase().includes(search.toLowerCase()) || 
+  const productosFiltrados = (productosRaw ?? []).filter((p: any) =>
+    p.nombre.toLowerCase().includes(search.toLowerCase()) ||
     p.sku.toLowerCase().includes(search.toLowerCase())
-  ).slice(0, 5) || [];
+  ).slice(0, 5);
 
   const agregarProducto = (prod: any) => {
     if (items.find(i => i.producto_id === prod.id)) {

@@ -4,8 +4,9 @@ import type { Transferencia, TransferenciaCreatePayload } from '../types/transfe
 export const transferenciasApi = {
   getAll: async (): Promise<Transferencia[]> => {
     const { data } = await api.get('/transferencias/');
-    // La API puede devolver {count, results:[]} si hay paginación global
-    return Array.isArray(data) ? data : (data.results ?? []);
+    // Backend envuelve: {data: {count, results:[]}}
+    const payload = data?.data;
+    return Array.isArray(payload) ? payload : (payload?.results ?? []);
   },
 
   getById: async (id: string): Promise<Transferencia> => {
