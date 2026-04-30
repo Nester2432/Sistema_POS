@@ -51,7 +51,8 @@ def crear_venta_completa(
     cliente_nombre: str = "Consumidor Final",
     cliente_documento: str = "",
     descuento_total: Decimal = Decimal("0.00"),
-    observaciones: str = ""
+    observaciones: str = "",
+    sucursal=None # Instancia de Sucursal activa (Fase 1A)
 ) -> Venta:
     """
     Orquesta la creación de una venta completa:
@@ -113,7 +114,8 @@ def crear_venta_completa(
             tipo=StockMovTipo.EGRESO,
             cantidad=cantidad,
             usuario=usuario,
-            motivo=f"Venta {venta.numero_comprobante}"
+            motivo=f"Venta {venta.numero_comprobante}",
+            sucursal=sucursal
         )
         
         subtotal_venta += item_subtotal
@@ -146,7 +148,7 @@ def crear_venta_completa(
     return venta
 
 @transaction.atomic
-def anular_venta(venta: Venta, usuario_anula) -> Venta:
+def anular_venta(venta: Venta, usuario_anula, sucursal=None) -> Venta:
     """
     Anula una venta:
     Solo Admin o Supervisor.
@@ -164,7 +166,8 @@ def anular_venta(venta: Venta, usuario_anula) -> Venta:
             tipo=StockMovTipo.INGRESO,
             cantidad=item.cantidad,
             usuario=usuario_anula,
-            motivo=f"Anulación de Venta {venta.numero_comprobante}"
+            motivo=f"Anulación de Venta {venta.numero_comprobante}",
+            sucursal=sucursal
         )
 
     # 2. Registrar Devolución en Caja (si la caja original sigue abierta o en la actual)

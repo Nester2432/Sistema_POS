@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from decimal import Decimal
 
 from .models import Producto, MovimientoStock, TipoMovimiento
+from modules.sucursales.models import Sucursal, StockSucursal
 
 @transaction.atomic
 def registrar_movimiento_stock(
@@ -16,7 +17,8 @@ def registrar_movimiento_stock(
     tipo: str,
     cantidad: Decimal,
     usuario,
-    motivo: str = ""
+    motivo: str = "",
+    sucursal: Sucursal = None
 ) -> MovimientoStock:
     """
     Registra un movimiento de stock y actualiza el stock actual del producto.
@@ -25,35 +27,53 @@ def registrar_movimiento_stock(
     if cantidad <= 0:
         raise ValidationError("La cantidad del movimiento debe ser mayor a cero.")
 
-    stock_anterior = producto.stock_actual
+    # Fallback: Si no se pasa sucursal, se asume la principal
+    if not sucursal:
+        sucursal = Sucursal.objects.for_empresa(producto.empresa_id).filter(es_principal=True).first()
+        if not sucursal:
+            raise ValidationError("No se especificó sucursal y la empresa no tiene una sucursal principal.")
+
+    stock_sucursal, _ = StockSucursal.objects.get_or_create(
+        empresa=producto.empresa,
+        sucursal=sucursal,
+        producto=producto,
+        defaults={'stock_actual': Decimal('0.00'), 'stock_minimo': Decimal('0.00')}
+    )
+
+    stock_anterior_sucursal = stock_sucursal.stock_actual
     
     # Calcular nuevo stock según tipo
-    if tipo in [TipoMovimiento.INGRESO]:
-        stock_nuevo = stock_anterior + cantidad
-    elif tipo in [TipoMovimiento.EGRESO, TipoMovimiento.AJUSTE, TipoMovimiento.TRANSFERENCIA]:
-        # En el caso de AJUSTE, se asume que la cantidad pasada es el diferencial (negativo para resta)
-        # pero aquí forzamos la lógica de negocio: EGRESO resta.
-        stock_nuevo = stock_anterior - cantidad
+    if tipo in [TipoMovimiento.INGRESO, TipoMovimiento.INGRESO_TRANSFERENCIA]:
+        stock_nuevo_sucursal = stock_anterior_sucursal + cantidad
+    elif tipo in [TipoMovimiento.EGRESO, TipoMovimiento.AJUSTE, TipoMovimiento.EGRESO_TRANSFERENCIA]:
+        stock_nuevo_sucursal = stock_anterior_sucursal - cantidad
     else:
         raise ValidationError(f"Tipo de movimiento '{tipo}' no reconocido.")
 
-    if stock_nuevo < 0:
-        raise ValidationError(f"No hay stock suficiente para el producto {producto.nombre}. Stock actual: {stock_anterior}")
+    if stock_nuevo_sucursal < 0:
+        raise ValidationError(f"No hay stock suficiente para el producto {producto.nombre} en {sucursal.nombre}. Stock actual: {stock_anterior_sucursal}")
 
     # 1. Crear el registro de historial
     movimiento = MovimientoStock.objects.create(
         empresa=producto.empresa,
+        sucursal=sucursal,
         producto=producto,
         tipo=tipo,
         cantidad=cantidad,
-        stock_anterior=stock_anterior,
-        stock_nuevo=stock_nuevo,
+        stock_anterior=stock_anterior_sucursal,
+        stock_nuevo=stock_nuevo_sucursal,
         motivo=motivo,
         usuario=usuario
     )
 
-    # 2. Actualizar el producto
-    producto.stock_actual = stock_nuevo
+    # 2. Actualizar stock en la sucursal
+    stock_sucursal.stock_actual = stock_nuevo_sucursal
+    stock_sucursal.save(update_fields=['stock_actual', 'updated_at'])
+
+    # 3. Compatibilidad hacia atrás: Actualizar producto.stock_actual global
+    # Calculamos la diferencia y se la sumamos al global
+    diferencia = stock_nuevo_sucursal - stock_anterior_sucursal
+    producto.stock_actual = producto.stock_actual + diferencia
     producto.save(update_fields=['stock_actual', 'updated_at'])
 
     return movimiento
@@ -63,7 +83,8 @@ def ajustar_stock_manual(
     producto: Producto,
     nuevo_stock: Decimal,
     usuario,
-    motivo: str = "Ajuste manual de inventario"
+    motivo: str = "Ajuste manual de inventario",
+    sucursal: Sucursal = None
 ) -> MovimientoStock:
     """
     Ajusta el stock de un producto a un valor específico.
@@ -72,7 +93,13 @@ def ajustar_stock_manual(
     if nuevo_stock < 0:
         raise ValidationError("El stock no puede ser negativo.")
 
-    diferencial = nuevo_stock - producto.stock_actual
+    if not sucursal:
+        sucursal = Sucursal.objects.for_empresa(producto.empresa_id).filter(es_principal=True).first()
+
+    stock_sucursal = StockSucursal.objects.filter(sucursal=sucursal, producto=producto).first()
+    stock_actual_suc = stock_sucursal.stock_actual if stock_sucursal else Decimal('0.00')
+
+    diferencial = nuevo_stock - stock_actual_suc
     
     if diferencial == 0:
         return None # No hay cambios
@@ -85,7 +112,8 @@ def ajustar_stock_manual(
         tipo=tipo,
         cantidad=cantidad_absoluta,
         usuario=usuario,
-        motivo=motivo
+        motivo=motivo,
+        sucursal=sucursal
     )
 
 # ─── Importación / Exportación ───────────────────────────────

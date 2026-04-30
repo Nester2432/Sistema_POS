@@ -101,12 +101,14 @@ class TipoMovimiento(models.TextChoices):
     INGRESO = "INGRESO", "Ingreso de Mercadería"
     EGRESO = "EGRESO", "Egreso / Venta"
     AJUSTE = "AJUSTE", "Ajuste de Inventario"
-    TRANSFERENCIA = "TRANSFERENCIA", "Transferencia entre almacenes"
+    INGRESO_TRANSFERENCIA = "INGRESO_TRANSFERENCIA", "Ingreso por Transferencia"
+    EGRESO_TRANSFERENCIA = "EGRESO_TRANSFERENCIA", "Egreso por Transferencia"
 
 
 class MovimientoStock(TenantModel):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="movimientos")
-    tipo = models.CharField(max_length=20, choices=TipoMovimiento.choices)
+    sucursal = models.ForeignKey("sucursales.Sucursal", on_delete=models.PROTECT, related_name="movimientos", null=True, blank=True)
+    tipo = models.CharField(max_length=50, choices=TipoMovimiento.choices)
     cantidad = models.DecimalField(max_digits=12, decimal_places=3)
     stock_anterior = models.DecimalField(max_digits=12, decimal_places=3)
     stock_nuevo = models.DecimalField(max_digits=12, decimal_places=3)

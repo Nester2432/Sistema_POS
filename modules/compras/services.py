@@ -24,7 +24,8 @@ def crear_compra_completa(
     metodo_pago: str, # EFECTIVO, CUENTA_CORRIENTE
     tipo_comprobante: str = "FACTURA",
     impuestos: Decimal = Decimal("0.00"),
-    observaciones: str = ""
+    observaciones: str = "",
+    sucursal=None # Instancia de Sucursal (Fase 1A)
 ) -> Compra:
     """
     Registra una compra y actualiza stock/finanzas.
@@ -76,7 +77,8 @@ def crear_compra_completa(
             tipo=StockMovTipo.INGRESO,
             cantidad=cantidad,
             usuario=usuario,
-            motivo=f"Compra {numero_comprobante}"
+            motivo=f"Compra {numero_comprobante}",
+            sucursal=sucursal
         )
         
         # Opcional: Actualizar precio de costo del producto
@@ -108,7 +110,7 @@ def crear_compra_completa(
     return compra
 
 @transaction.atomic
-def anular_compra(compra: Compra, usuario_anula) -> Compra:
+def anular_compra(compra: Compra, usuario_anula, sucursal=None) -> Compra:
     """Anula la compra y revierte stock y finanzas."""
     if compra.estado == CompraEstado.ANULADA:
         raise ValidationError("Esta compra ya está anulada.")
@@ -120,7 +122,8 @@ def anular_compra(compra: Compra, usuario_anula) -> Compra:
             tipo=StockMovTipo.EGRESO,
             cantidad=item.cantidad,
             usuario=usuario_anula,
-            motivo=f"Anulación de Compra {compra.numero_comprobante}"
+            motivo=f"Anulación de Compra {compra.numero_comprobante}",
+            sucursal=sucursal
         )
 
     # 2. Revertir Finanzas

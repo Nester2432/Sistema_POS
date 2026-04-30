@@ -44,10 +44,8 @@ LOCAL_APPS = [
     "modules.clientes",
     "modules.reportes",
     "modules.compras",
-    # módulos de negocio se agregan aquí:
-    # "modules.inventario",
-    # "modules.ventas",
-    # "modules.clientes",
+    "modules.sucursales",
+    "modules.transferencias",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -61,6 +59,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "core.middleware.EmpresaMiddleware",
+    "core.middleware_sucursal.SucursalMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

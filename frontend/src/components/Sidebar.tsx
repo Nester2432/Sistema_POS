@@ -5,11 +5,12 @@ import {
   Package, 
   Users, 
   Wallet, 
-  BarChart3, 
   Truck,
+  ArrowRightLeft,
   LogOut
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { SucursalSelector } from './SucursalSelector';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -23,6 +24,7 @@ const menuItems = [
   { icon: Package, label: 'Inventario', path: '/app/inventario' },
   { icon: Wallet, label: 'Caja', path: '/app/caja' },
   { icon: Truck, label: 'Compras', path: '/app/compras' },
+  { icon: ArrowRightLeft, label: 'Transferencias', path: '/app/transferencias' },
   { icon: Users, label: 'Clientes', path: '/app/clientes' },
   { icon: BarChart3, label: 'Reportes', path: '/app/reportes' },
 ];
@@ -40,9 +42,13 @@ export const Sidebar = () => {
             <p className="text-[10px] text-slate-500 font-medium mt-0.5">Control de Gestión</p>
           </div>
         </div>
+        
+        <div className="mt-6 pt-4 border-t border-white/5">
+          <SucursalSelector />
+        </div>
       </div>
 
-      <nav className="flex-1 px-3 space-y-1 mt-4">
+      <nav className="flex-1 px-3 space-y-1 mt-2">
         {menuItems.map((item) => (
           <NavLink
             key={item.path}

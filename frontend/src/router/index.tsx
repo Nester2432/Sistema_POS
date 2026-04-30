@@ -9,6 +9,9 @@ import { CajaPage } from '../pages/CajaPage';
 import { PurchasesPage } from '../pages/PurchasesPage';
 import { MainLayout } from '../layouts/MainLayout';
 
+import { TransferenciasPage } from '../pages/Transferencias/TransferenciasPage';
+import { NuevaTransferenciaPage } from '../pages/Transferencias/NuevaTransferenciaPage';
+
 // Componentes temporales para las rutas que implementaremos luego
 const Placeholder = ({ name }: { name: string }) => (
   <div className="p-8 text-center text-slate-500">
@@ -37,6 +40,8 @@ const router = createBrowserRouter([
       { path: 'compras', element: <PurchasesPage /> },
       { path: 'clientes', element: <ClientsPage /> },
       { path: 'reportes', element: <Placeholder name="Reportes" /> },
+      { path: 'transferencias', element: <TransferenciasPage /> },
+      { path: 'transferencias/nueva', element: <NuevaTransferenciaPage /> },
     ],
   },
   {

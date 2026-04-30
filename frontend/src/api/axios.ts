@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { useSucursalStore } from '../store/sucursalStore';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
@@ -14,6 +15,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  const sucursalActiva = useSucursalStore.getState().sucursalActiva;
+  if (sucursalActiva) {
+    config.headers['X-Sucursal-ID'] = sucursalActiva.id;
+  }
+  
   return config;
 });
 
@@ -43,6 +50,14 @@ api.interceptors.response.use(
           return Promise.reject(refreshError);
         }
       }
+    }
+
+    // Manejo de Error 403 (Forbidden) por Sucursal Inválida
+    if (error.response?.status === 403) {
+      // Limpiamos la sucursal activa inválida
+      useSucursalStore.getState().limpiarSucursal();
+      // Opcional: Podríamos emitir un evento para recargar o recargar directamente
+      // Pero reactivaremos el flujo en el UI (que verá que es null y recargará)
     }
     
     return Promise.reject(error);

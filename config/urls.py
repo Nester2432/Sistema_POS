@@ -38,6 +38,12 @@ urlpatterns = [
 
     # ─── Compras ──────────────────────────────────────────────
     path("api/v1/compras/", include("modules.compras.urls")),
+
+    # ─── Sucursales ───────────────────────────────────────────
+    path("api/v1/sucursales/", include("modules.sucursales.urls")),
+
+    # ─── Transferencias ───────────────────────────────────────
+    path("api/v1/transferencias/", include("modules.transferencias.urls")),
 ]
 
 # ─── Debug Toolbar (solo en local) ────────────────────────────
