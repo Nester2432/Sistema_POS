@@ -13,6 +13,9 @@ from modules.clientes.services import crear_cliente_con_cuenta
 from modules.caja.services import abrir_caja
 from modules.ventas.services import crear_venta_completa
 from modules.compras.services import crear_compra_completa
+from modules.inventario.services import registrar_movimiento_stock
+from modules.inventario.models import TipoMovimiento
+from modules.sucursales.models import Sucursal
 
 class Command(BaseCommand):
     help = "Puebla la base de datos con datos de ElectroHogar Demo."
@@ -114,6 +117,31 @@ class Command(BaseCommand):
             prods_inst.append(prod)
 
         self.stdout.write(f"Creados {len(prods_inst)} productos para {empresa.nombre}")
+
+        # 6b. Registrar stock inicial en StockSucursal (sucursal principal)
+        sucursal_principal = Sucursal.objects.filter(empresa=empresa, es_principal=True).first()
+        if not sucursal_principal:
+            sucursal_principal = Sucursal.objects.create(
+                empresa=empresa,
+                nombre="Casa Central",
+                codigo="CENTRAL",
+                es_principal=True,
+                activo=True
+            )
+        
+        for i, prod in enumerate(prods_inst):
+            stock_inicial = Decimal(str(productos_data[i]["s"]))
+            if stock_inicial > 0:
+                registrar_movimiento_stock(
+                    producto=prod,
+                    tipo=TipoMovimiento.INGRESO,
+                    cantidad=stock_inicial,
+                    usuario=user,
+                    motivo="Stock inicial demo",
+                    sucursal=sucursal_principal
+                )
+        
+        self.stdout.write(f"✅ Stock inicial cargado en '{sucursal_principal.nombre}'")
 
         # 7. Clientes
         clientes = [
