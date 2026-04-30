@@ -44,114 +44,108 @@ export const LandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-8 pt-32 pb-40 flex flex-col items-center text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/5 rounded-full text-[10px] font-black text-primary-400 uppercase tracking-[0.3em] mb-10">
-          <Sparkles size={14} />
-          <span>SaaS POS DE PRÓXIMA GENERACIÓN</span>
+      <section className="max-w-7xl mx-auto px-8 pt-20 pb-32 flex flex-col items-center text-center relative z-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-8">
+          <Sparkles size={14} className="text-accent-500" />
+          <span>SISTEMA POS DE ALTO RENDIMIENTO</span>
         </div>
-        <h1 className="text-6xl md:text-8xl font-black text-white max-w-5xl leading-[1.1] mb-10 tracking-tighter">
-          Domina tu negocio con <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-400 to-blue-500">precisión absoluta.</span>
+        <h1 className="text-5xl md:text-7xl font-bold text-white max-w-4xl leading-[1.1] mb-8 tracking-tight">
+          Gestiona tu negocio con <span className="text-slate-500">precisión industrial.</span>
         </h1>
-        <p className="text-xl text-slate-500 max-w-2xl mb-14 font-medium leading-relaxed">
-          La plataforma definitiva para escalar tus ventas, controlar stock en tiempo real y gestionar finanzas con una interfaz premium e intuitiva.
+        <p className="text-lg text-slate-500 max-w-xl mb-12 font-medium leading-relaxed">
+          Optimiza tus ventas, controla tu inventario en tiempo real y fideliza clientes con una plataforma diseñada para la eficiencia.
         </p>
-        <div className="flex flex-col sm:flex-row gap-6">
+        <div className="flex flex-col sm:flex-row gap-4">
           <Link 
             to="/login" 
-            className="flex items-center justify-center gap-3 px-12 py-6 bg-white text-slate-950 rounded-[2rem] font-black text-lg hover:bg-slate-200 transition-all shadow-2xl shadow-white/5 active:scale-95 group"
+            className="flex items-center justify-center gap-2 px-8 py-3 bg-white text-slate-950 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all shadow-lg active:scale-[0.98] group"
           >
-            <span>PROBAR DEMO GRATIS</span>
-            <ArrowRight size={24} className="text-slate-400 group-hover:translate-x-2 transition-transform" />
+            <span>Probar Demo Gratis</span>
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           
-          <button className="flex items-center justify-center gap-3 px-12 py-6 bg-white/5 text-white border border-white/10 rounded-[2rem] font-black text-lg hover:bg-white/10 transition-all active:scale-95 group">
-            <Zap size={24} className="text-primary-500" />
-            <span>SOLICITAR ACCESO</span>
+          <button className="flex items-center justify-center gap-2 px-8 py-3 bg-white/5 text-white border border-white/10 rounded-xl font-bold text-sm hover:bg-white/10 transition-all active:scale-[0.98]">
+            <span>Solicitar Acceso</span>
           </button>
         </div>
       </section>
 
       {/* Beneficios */}
-      <section id="beneficios" className="max-w-7xl mx-auto px-8 py-40 relative z-10 border-t border-white/5">
-        <div className="text-center mb-24">
-          <h2 className="text-xs font-black text-primary-500 uppercase tracking-[0.4em] mb-4">CAPACIDADES CORE</h2>
-          <p className="text-4xl font-black text-white tracking-tighter">Potencia bruta para tu empresa</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <section id="beneficios" className="max-w-7xl mx-auto px-8 py-24 relative z-10 border-t border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <BenefitCard 
             icon={Package} 
-            title="Inventario Inteligente" 
-            desc="Control total con alertas de stock crítico y trazabilidad completa de movimientos." 
+            title="Inventario" 
+            desc="Control total con alertas de stock crítico y trazabilidad completa." 
           />
           <BenefitCard 
             icon={ShoppingCart} 
-            title="Punto de Venta Pro" 
-            desc="Interfaz táctica optimizada para velocidad extrema y precisión en cada ticket." 
+            title="Punto de Venta" 
+            desc="Interfaz optimizada para velocidad extrema en cada transacción." 
           />
           <BenefitCard 
             icon={Wallet} 
-            title="Arqueo Blindado" 
-            desc="Gestión de caja con auditoría de movimientos y reportes de diferencias automáticos." 
+            title="Caja Blindada" 
+            desc="Gestión de arqueo con auditoría de movimientos automática." 
           />
           <BenefitCard 
             icon={Users} 
             title="Ecosistema CRM" 
-            desc="Fideliza clientes y gestiona cuentas corrientes con perfiles financieros detallados." 
+            desc="Fideliza clientes y gestiona perfiles financieros detallados." 
           />
         </div>
       </section>
 
       {/* Screenshots / Mockups */}
-      <section id="screenshots" className="bg-slate-900/50 py-40 border-y border-white/5 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-600/5 via-transparent to-transparent opacity-50"></div>
-        
-        <div className="max-w-7xl mx-auto px-8 text-center mb-32 relative z-10">
-          <Globe className="mx-auto text-primary-500 mb-6" size={48} />
-          <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Arquitectura de Alto Nivel</h2>
-          <p className="text-slate-500 font-bold max-w-2xl mx-auto">Diseñado bajo estándares de software de grado industrial, empaquetado en una experiencia minimalista.</p>
-        </div>
-        
-        <div className="flex flex-col gap-40 max-w-7xl mx-auto px-8 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center gap-24">
-            <div className="flex-1 text-left">
-              <div className="inline-block p-2 bg-primary-500/10 text-primary-400 rounded-lg mb-6">
-                <BarChart3 size={24} />
-              </div>
-              <h3 className="text-4xl font-black text-white tracking-tighter mb-6 uppercase tracking-tight">Dashboard de Mando</h3>
-              <p className="text-slate-500 mb-8 font-medium leading-relaxed">Visualiza la salud de tu negocio con métricas en tiempo real, gráficos predictivos y estados de cuenta.</p>
-              <ul className="space-y-4">
-                {['Métricas de facturación diaria', 'Desglose de métodos de pago', 'Alertas de stock automático'].map((t) => (
-                  <li key={t} className="flex items-center gap-3 text-slate-300 font-bold text-sm tracking-tight">
-                    <CheckCircle2 size={20} className="text-primary-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]" /> {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex-1 bg-white/5 rounded-[3rem] p-6 shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10 group">
-              <div className="bg-slate-950 rounded-[2rem] overflow-hidden border border-white/5 transition-transform group-hover:scale-[1.02] duration-700">
-                <img src="/dashboard_mockup.png" alt="Dashboard" className="opacity-80 group-hover:opacity-100 transition-opacity" />
-              </div>
-            </div>
+      <section id="screenshots" className="bg-slate-900/30 py-24 border-y border-white/5 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-8">
+          <div className="text-center mb-16 relative z-10">
+            <h2 className="text-3xl font-bold text-white tracking-tight mb-4">Arquitectura de Alto Nivel</h2>
+            <p className="text-slate-500 max-w-xl mx-auto text-sm font-medium">Diseñado bajo estándares industriales para garantizar escalabilidad total.</p>
           </div>
-
-          <div className="flex flex-col lg:flex-row-reverse items-center gap-24">
-            <div className="flex-1 text-left">
-              <div className="inline-block p-2 bg-blue-500/10 text-blue-400 rounded-lg mb-6">
-                <ShoppingCart size={24} />
+          
+          <div className="flex flex-col gap-32 relative z-10">
+            <div className="flex flex-col lg:flex-row items-center gap-20">
+              <div className="flex-1 text-left">
+                <div className="inline-flex p-2 bg-accent-500/10 text-accent-500 rounded-lg mb-6">
+                  <BarChart3 size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-white tracking-tight mb-4 uppercase text-sm opacity-50 tracking-widest">Dashboard de Mando</h3>
+                <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">Visualiza la salud de tu negocio con métricas en tiempo real.</p>
+                <ul className="space-y-3">
+                  {['Facturación diaria', 'Métodos de pago', 'Alertas de stock'].map((t) => (
+                    <li key={t} className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+                      <CheckCircle2 size={16} className="text-accent-500" /> {t}
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <h3 className="text-4xl font-black text-white tracking-tighter mb-6 uppercase tracking-tight">Terminal de Ventas</h3>
-              <p className="text-slate-500 mb-8 font-medium leading-relaxed">El POS más rápido del mercado. Búsqueda inteligente, gestión de descuentos y carrito persistente.</p>
-              <ul className="space-y-4">
-                {['Búsqueda táctica por SKU', 'Cierre de ticket en 2 clicks', 'Soporte multimoneda nativo'].map((t) => (
-                  <li key={t} className="flex items-center gap-3 text-slate-300 font-bold text-sm tracking-tight">
-                    <CheckCircle2 size={20} className="text-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.4)]" /> {t}
-                  </li>
-                ))}
-              </ul>
+              <div className="flex-1 bg-white/5 rounded-2xl p-4 shadow-2xl border border-white/5 group">
+                <div className="bg-slate-950 rounded-xl overflow-hidden border border-white/5 transition-transform group-hover:scale-[1.01] duration-500">
+                  <img src="/dashboard_mockup.png" alt="Dashboard" className="opacity-70 group-hover:opacity-90 transition-opacity" />
+                </div>
+              </div>
             </div>
-            <div className="flex-1 bg-white/5 rounded-[3rem] p-6 shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10 group">
-              <div className="bg-slate-950 rounded-[2rem] overflow-hidden border border-white/5 transition-transform group-hover:scale-[1.02] duration-700">
-                <img src="/pos_mockup.png" alt="POS" className="opacity-80 group-hover:opacity-100 transition-opacity" />
+
+            <div className="flex flex-col lg:flex-row-reverse items-center gap-20">
+              <div className="flex-1 text-left">
+                <div className="inline-flex p-2 bg-accent-500/10 text-accent-500 rounded-lg mb-6">
+                  <ShoppingCart size={24} />
+                </div>
+                <h3 className="text-2xl font-bold text-white tracking-tight mb-4 uppercase text-sm opacity-50 tracking-widest">Terminal POS</h3>
+                <p className="text-slate-500 mb-6 text-sm font-medium leading-relaxed">El punto de venta más rápido. Búsqueda inteligente y gestión ágil.</p>
+                <ul className="space-y-3">
+                  {['Búsqueda táctica', 'Cierre en 2 clicks', 'Tickets PDF'].map((t) => (
+                    <li key={t} className="flex items-center gap-2 text-slate-300 font-semibold text-xs">
+                      <CheckCircle2 size={16} className="text-accent-500" /> {t}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex-1 bg-white/5 rounded-2xl p-4 shadow-2xl border border-white/5 group">
+                <div className="bg-slate-950 rounded-xl overflow-hidden border border-white/5 transition-transform group-hover:scale-[1.01] duration-500">
+                  <img src="/pos_mockup.png" alt="POS" className="opacity-70 group-hover:opacity-90 transition-opacity" />
+                </div>
               </div>
             </div>
           </div>
@@ -159,28 +153,27 @@ export const LandingPage = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-56 text-center px-8 relative overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-600/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <h2 className="text-6xl md:text-8xl font-black text-white mb-14 tracking-tighter relative z-10 leading-none">
-          ¿Listo para el <br/><span className="text-primary-500">siguiente nivel?</span>
+      <section className="py-40 text-center px-8 relative">
+        <h2 className="text-4xl md:text-5xl font-bold text-white mb-10 tracking-tight leading-none">
+          ¿Listo para el <br/><span className="text-accent-500">siguiente nivel?</span>
         </h2>
-        <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
-          <Link to="/login" className="px-16 py-8 bg-white text-slate-950 rounded-[2.5rem] font-black text-2xl hover:bg-slate-200 shadow-[0_20px_50px_rgba(255,255,255,0.1)] transition-all active:scale-95">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to="/login" className="px-10 py-4 bg-white text-slate-950 rounded-xl font-bold text-sm shadow-xl transition-all active:scale-[0.98]">
             EMPEZAR AHORA
           </Link>
-          <button className="px-16 py-8 bg-white/5 text-white border border-white/10 rounded-[2.5rem] font-black text-2xl hover:bg-white/10 transition-all active:scale-95">
+          <button className="px-10 py-4 bg-white/5 text-white border border-white/10 rounded-xl font-bold text-sm hover:bg-white/10 transition-all active:scale-[0.98]">
             AGENDAR DEMO
           </button>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-20 border-t border-white/5 text-center relative z-10">
-        <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-8 h-8 bg-white/5 rounded-lg flex items-center justify-center text-white font-black text-sm">S</div>
-          <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em]">SISTEMA_POS CLOUD SUITE</span>
+      <footer className="py-12 border-t border-white/5 text-center text-slate-600">
+        <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="w-6 h-6 bg-white/5 rounded flex items-center justify-center text-white font-bold text-[10px]">S</div>
+          <span className="text-[10px] font-bold uppercase tracking-widest">SISTEMA_POS SUITE</span>
         </div>
-        <p className="text-slate-700 text-xs font-bold tracking-widest uppercase">&copy; 2026 INFINITE CODE SA. TODOS LOS DERECHOS RESERVADOS.</p>
+        <p className="text-[10px] font-medium tracking-widest uppercase">&copy; 2026 TODOS LOS DERECHOS RESERVADOS.</p>
       </footer>
     </div>
   );

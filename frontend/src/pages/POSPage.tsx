@@ -112,59 +112,59 @@ export const POSPage = () => {
 
   if (!caja) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center p-8 bg-white/5 backdrop-blur-sm rounded-[3rem] border border-white/5">
-        <div className="p-8 bg-amber-500/10 rounded-full text-amber-500 mb-8 animate-pulse shadow-[0_0_30px_rgba(245,158,11,0.2)]">
-          <AlertTriangle size={80} />
+      <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-white/5 backdrop-blur-md rounded-2xl border border-white/5">
+        <div className="p-6 bg-amber-500/10 rounded-full text-amber-500 mb-6">
+          <AlertTriangle size={64} />
         </div>
-        <h2 className="text-4xl font-black text-white mb-4 tracking-tighter">Caja Cerrada</h2>
-        <p className="text-slate-500 max-w-md mb-10 text-lg font-medium leading-relaxed">
+        <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Caja Cerrada</h2>
+        <p className="text-slate-500 max-w-sm mb-8 text-sm font-medium leading-relaxed">
           Debes abrir un turno de caja antes de poder realizar ventas. Es necesario para el control de arqueo y seguridad.
         </p>
         <Link 
           to="/app/caja" 
-          className="px-10 py-5 bg-white text-slate-950 rounded-[1.5rem] font-black text-xl hover:bg-slate-200 shadow-xl shadow-white/5 transition-all active:scale-95 flex items-center gap-3 group"
+          className="flex items-center gap-2 px-8 py-3 bg-white text-slate-950 rounded-xl font-bold text-sm hover:bg-slate-200 transition-all shadow-lg active:scale-[0.98]"
         >
           <span>Gestionar Caja</span>
-          <ArrowRight size={24} className="text-slate-400 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight size={18} />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-160px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-120px)]">
       {/* Selector de Productos */}
       <div className="lg:col-span-8 flex flex-col gap-6">
-        <div className="bg-white/5 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-2xl">
+        <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/5 shadow-xl">
           <div className="relative group">
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-primary-400 transition-colors" size={24} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-accent-500 transition-colors" size={20} />
             <input 
               type="text" 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Escribe nombre o SKU del producto..." 
-              className="w-full pl-14 pr-6 py-5 bg-white/5 border border-white/5 focus:bg-white/10 focus:border-primary-500/50 rounded-[1.5rem] outline-none text-xl transition-all text-white placeholder:text-slate-600 font-bold"
+              placeholder="Buscar producto por nombre o código..." 
+              className="w-full pl-11 pr-4 py-3 bg-slate-900/50 border border-white/5 focus:border-accent-500/50 rounded-xl outline-none text-base transition-all text-white placeholder:text-slate-600 font-medium"
             />
           </div>
           
           {productos.length > 0 && (
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-auto pr-2 custom-scrollbar">
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-auto pr-1">
               {productos.map((prod: any) => (
                 <button 
                   key={prod.id}
                   onClick={() => addToCart(prod)}
-                  className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 hover:border-primary-500/30 transition-all text-left group"
+                  className="flex items-center gap-4 p-3 bg-white/5 border border-white/5 rounded-xl hover:bg-white/10 hover:border-accent-500/30 transition-all text-left group"
                 >
-                  <div className="h-16 w-16 bg-white/5 rounded-xl flex items-center justify-center text-slate-500 group-hover:text-primary-400 transition-colors border border-white/5">
-                    <Package size={32} />
+                  <div className="h-12 w-12 bg-slate-800 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-accent-500 transition-colors border border-white/5">
+                    <Package size={24} />
                   </div>
                   <div className="flex-1">
-                    <p className="font-black text-white text-lg leading-tight mb-1">{prod.nombre}</p>
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{prod.sku}</p>
-                    <p className="text-xl font-black text-primary-400 mt-1">${Number(prod.precio_venta).toLocaleString()}</p>
+                    <p className="font-bold text-white text-sm leading-none mb-1">{prod.nombre}</p>
+                    <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest">{prod.sku}</p>
+                    <p className="text-base font-bold text-slate-200 mt-1">${Number(prod.precio_venta).toLocaleString()}</p>
                   </div>
-                  <div className="p-2 bg-primary-500/10 text-primary-400 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Plus size={20} />
+                  <div className="p-2 bg-white/5 text-slate-400 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Plus size={16} />
                   </div>
                 </button>
               ))}
@@ -172,26 +172,26 @@ export const POSPage = () => {
           )}
         </div>
 
-        {/* Cliente y Otros */}
-        <div className="bg-white/5 backdrop-blur-md p-8 rounded-[2.5rem] border border-white/5">
-          <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-6">Información del Cliente</h3>
-          <div className="flex flex-col md:flex-row gap-6 items-center">
+        {/* Cliente */}
+        <div className="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/5">
+          <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Información del Cliente</h3>
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="flex-1 relative w-full group">
-              <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary-400" size={20} />
+              <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-accent-500" size={18} />
               <input 
                 type="text"
-                placeholder="Buscar cliente por nombre o DNI..."
-                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-white/5 rounded-2xl text-white outline-none focus:border-primary-500/50"
+                placeholder="Buscar cliente..."
+                className="w-full pl-11 pr-4 py-2.5 bg-slate-900/50 border border-white/5 rounded-xl text-sm text-white outline-none focus:border-accent-500/50"
                 value={clientSearch}
                 onChange={e => setClientSearch(e.target.value)}
               />
               {clientes.length > 0 && clientSearch && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden">
+                <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
                   {clientes.map((c: any) => (
                     <button 
                       key={c.id}
                       onClick={() => { setCliente(c); setClientSearch(''); }}
-                      className="w-full p-4 text-left hover:bg-white/5 text-white font-bold border-b border-white/5 last:border-0"
+                      className="w-full p-3 text-left hover:bg-white/5 text-sm text-white font-medium border-b border-white/5 last:border-0"
                     >
                       {c.nombre} <span className="text-slate-500 text-xs ml-2">({c.documento})</span>
                     </button>
@@ -200,16 +200,16 @@ export const POSPage = () => {
               )}
             </div>
             {cliente && (
-              <div className="flex items-center gap-4 p-4 bg-primary-500/10 border border-primary-500/20 rounded-2xl text-white">
-                <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center font-black">
+              <div className="flex items-center gap-3 px-4 py-2 bg-accent-500/10 border border-accent-500/20 rounded-xl text-white">
+                <div className="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center font-bold text-xs">
                   {cliente.nombre.charAt(0)}
                 </div>
                 <div>
-                  <p className="text-sm font-black tracking-tight">{cliente.nombre}</p>
-                  <p className="text-[10px] text-primary-400 font-bold uppercase tracking-widest">{cliente.documento}</p>
+                  <p className="text-xs font-bold">{cliente.nombre}</p>
+                  <p className="text-[10px] text-accent-500/80 font-medium">{cliente.documento}</p>
                 </div>
-                <button onClick={() => setCliente(null)} className="text-slate-500 hover:text-white transition-colors">
-                  <X size={18} />
+                <button onClick={() => setCliente(null)} className="ml-2 text-slate-500 hover:text-white transition-colors">
+                  <X size={16} />
                 </button>
               </div>
             )}
@@ -217,135 +217,124 @@ export const POSPage = () => {
         </div>
       </div>
 
-      {/* Carrito y Cobro */}
-      <div className="lg:col-span-4 flex flex-col bg-slate-900 rounded-[3rem] border border-white/5 shadow-2xl overflow-hidden relative">
-        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
-          <h3 className="text-xl font-black text-white tracking-tighter uppercase tracking-widest text-xs opacity-50">Carrito de Venta</h3>
-          <span className="px-3 py-1 bg-white/10 text-white text-[10px] font-black rounded-lg border border-white/10">
-            {cart.reduce((acc, item) => acc + item.cantidad, 0)} ITEMS
+      {/* Carrito */}
+      <div className="lg:col-span-4 flex flex-col bg-slate-900 rounded-2xl border border-white/5 shadow-2xl overflow-hidden relative">
+        <div className="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Resumen de Venta</h3>
+          <span className="px-2 py-0.5 bg-white/10 text-white text-[10px] font-bold rounded-md">
+            {cart.reduce((acc, item) => acc + item.cantidad, 0)} items
           </span>
         </div>
 
-        <div className="flex-1 overflow-auto p-6 space-y-4 custom-scrollbar">
+        <div className="flex-1 overflow-auto p-4 space-y-3">
           {cart.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-slate-700 gap-4 opacity-20">
-              <ShoppingCart size={80} strokeWidth={1} />
-              <p className="font-black text-xs uppercase tracking-[0.2em]">Carrito Vacío</p>
+            <div className="h-full flex flex-col items-center justify-center text-slate-800 gap-3 opacity-40">
+              <ShoppingCart size={48} strokeWidth={1.5} />
+              <p className="text-[10px] font-bold uppercase tracking-widest">Esperando productos...</p>
             </div>
           ) : (
             cart.map(item => (
-              <div key={item.id} className="p-4 bg-white/5 rounded-2xl border border-white/5 group relative overflow-hidden transition-all hover:bg-white/[0.08]">
-                <div className="flex justify-between items-start mb-3">
+              <div key={item.id} className="p-3 bg-white/[0.02] rounded-xl border border-white/5 group transition-all hover:bg-white/[0.04]">
+                <div className="flex justify-between items-start mb-2">
                   <div className="flex-1">
-                    <p className="font-black text-white text-sm leading-tight pr-8">{item.nombre}</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase mt-1 tracking-wider">${Number(item.precio_venta).toLocaleString()} c/u</p>
+                    <p className="font-semibold text-white text-sm leading-tight pr-6">{item.nombre}</p>
+                    <p className="text-[10px] text-slate-500 font-medium mt-1">${Number(item.precio_venta).toLocaleString()} c/u</p>
                   </div>
                   <button 
                     onClick={() => removeFromCart(item.id)}
-                    className="p-1.5 text-slate-600 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all"
+                    className="p-1 text-slate-600 hover:text-rose-400 transition-all"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center bg-slate-950 rounded-xl border border-white/5 p-1">
+                  <div className="flex items-center bg-slate-950 rounded-lg border border-white/5 p-0.5">
                     <button 
                       onClick={() => updateQuantity(item.id, -1)}
-                      className="p-1.5 hover:bg-white/5 rounded-lg text-slate-400 transition-colors"
+                      className="p-1 hover:bg-white/5 rounded text-slate-400"
                     >
-                      <Minus size={14} />
+                      <Minus size={12} />
                     </button>
-                    <span className="w-10 text-center font-black text-white text-sm">{item.cantidad}</span>
+                    <span className="w-8 text-center font-bold text-white text-xs">{item.cantidad}</span>
                     <button 
                       onClick={() => updateQuantity(item.id, 1)}
-                      className="p-1.5 hover:bg-white/5 rounded-lg text-slate-400 transition-colors"
+                      className="p-1 hover:bg-white/5 rounded text-slate-400"
                     >
-                      <Plus size={14} />
+                      <Plus size={12} />
                     </button>
                   </div>
-                  <p className="font-black text-white text-lg tracking-tighter">${(item.precio_venta * item.cantidad).toLocaleString()}</p>
+                  <p className="font-bold text-white text-base">${(item.precio_venta * item.cantidad).toLocaleString()}</p>
                 </div>
               </div>
             ))
           )}
         </div>
 
-        {/* Totales y Finalizar */}
-        <div className="p-8 bg-slate-950/80 backdrop-blur-md border-t border-white/5 space-y-6">
-          <div className="space-y-3">
-            <div className="flex justify-between text-slate-500 font-bold text-xs uppercase tracking-widest">
+        {/* Totales */}
+        <div className="p-6 bg-slate-950/80 backdrop-blur-md border-t border-white/5 space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-slate-500 text-xs">
               <span>Subtotal</span>
-              <span className="text-white">${subtotal.toLocaleString()}</span>
+              <span className="text-white font-medium">${subtotal.toLocaleString()}</span>
             </div>
-            {descuento > 0 && (
-              <div className="flex justify-between text-rose-400 font-bold text-xs uppercase tracking-widest">
-                <span>Descuento</span>
-                <span>-${descuento.toLocaleString()}</span>
-              </div>
-            )}
-            <div className="flex justify-between items-end pt-4 border-t border-white/5">
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Total Cobro</span>
-              <span className="text-5xl font-black text-white tracking-tighter shadow-primary-500/20 shadow-sm">${total.toLocaleString()}</span>
+            <div className="flex justify-between items-end pt-3 border-t border-white/5">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total a Pagar</span>
+              <span className="text-4xl font-bold text-white tracking-tight">${total.toLocaleString()}</span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <button 
-              onClick={() => setMetodoPago('EFECTIVO')}
-              className={`py-3 rounded-xl font-black text-[10px] tracking-widest transition-all border ${metodoPago === 'EFECTIVO' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-white/5 text-slate-500 border-white/5 hover:bg-white/10'}`}
-            >
-              EFECTIVO
-            </button>
-            <button 
-              onClick={() => setMetodoPago('TRANSFERENCIA')}
-              className={`py-3 rounded-xl font-black text-[10px] tracking-widest transition-all border ${metodoPago === 'TRANSFERENCIA' ? 'bg-primary-500 text-white border-primary-400 shadow-lg shadow-primary-500/20' : 'bg-white/5 text-slate-500 border-white/5 hover:bg-white/10'}`}
-            >
-              TRANSFERENCIA
-            </button>
+          <div className="grid grid-cols-2 gap-2">
+            {['EFECTIVO', 'TRANSFERENCIA'].map(metodo => (
+              <button 
+                key={metodo}
+                onClick={() => setMetodoPago(metodo)}
+                className={`py-2 rounded-xl text-[10px] font-bold tracking-widest transition-all border ${metodoPago === metodo ? 'bg-white text-slate-950 border-white' : 'bg-white/5 text-slate-500 border-white/5'}`}
+              >
+                {metodo}
+              </button>
+            ))}
           </div>
 
           <button
             onClick={handleFinalize}
             disabled={cart.length === 0 || mutation.isPending}
-            className="w-full py-6 bg-white hover:bg-slate-200 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 text-2xl font-black rounded-[2rem] shadow-2xl transition-all active:scale-95 flex items-center justify-center gap-3 group"
+            className="w-full py-4 bg-white hover:bg-slate-200 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 text-base font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
           >
-            {mutation.isPending ? <Loader2 className="animate-spin" /> : (
+            {mutation.isPending ? <Loader2 className="animate-spin" size={20} /> : (
               <>
-                <span>FINALIZAR COBRO</span>
-                <ArrowRight size={28} className="text-slate-400 group-hover:translate-x-2 transition-transform" />
+                <span>FINALIZAR VENTA</span>
+                <ArrowRight size={20} />
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Modal de Éxito */}
-      <Modal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} title="VENTA FINALIZADA">
-        <div className="text-center space-y-8 p-4">
+      <Modal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} title="Operación Exitosa">
+        <div className="text-center space-y-6 p-2">
           <div className="flex justify-center">
-            <div className="p-6 bg-emerald-500/10 text-emerald-400 rounded-full shadow-[0_0_50px_rgba(16,185,129,0.2)] border border-emerald-500/20 animate-bounce">
-              <CheckCircle2 size={64} />
+            <div className="p-5 bg-emerald-500/10 text-emerald-500 rounded-full border border-emerald-500/20">
+              <CheckCircle2 size={48} />
             </div>
           </div>
           <div>
-            <h4 className="text-3xl font-black text-white tracking-tighter">¡Operación Exitosa!</h4>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">Ticket Nro: {lastVenta?.nro_comprobante}</p>
+            <h4 className="text-2xl font-bold text-white tracking-tight">Venta Completada</h4>
+            <p className="text-slate-500 font-medium text-xs mt-1">Comprobante: {lastVenta?.nro_comprobante}</p>
           </div>
-          <div className="bg-white/5 p-8 rounded-[2rem] border border-dashed border-white/10 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-emerald-500/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-            <p className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-2">Total Recibido</p>
-            <p className="text-5xl font-black text-white tracking-tighter">${Number(lastVenta?.total).toLocaleString()}</p>
+          <div className="bg-white/5 p-6 rounded-2xl border border-white/5">
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Monto Cobrado</p>
+            <p className="text-4xl font-bold text-white tracking-tight">${Number(lastVenta?.total).toLocaleString()}</p>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-2 py-4 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-xs tracking-widest hover:bg-white/10 transition-all">
-              <Receipt size={18} />
-              IMPRIMIR
+          <div className="grid grid-cols-2 gap-3">
+            <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-white/10">
+              <Receipt size={16} />
+              Ticket
             </button>
             <button 
               onClick={() => setIsSuccessModalOpen(false)}
-              className="py-4 bg-white text-slate-950 rounded-2xl font-black text-xs tracking-widest hover:bg-slate-200 transition-all"
+              className="py-3 bg-white text-slate-950 rounded-xl text-xs font-bold hover:bg-slate-200"
             >
-              NUEVA VENTA
+              Nueva Venta
             </button>
           </div>
         </div>
