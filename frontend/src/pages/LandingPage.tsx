@@ -7,8 +7,6 @@ import {
   Users, 
   ArrowRight,
   Sparkles,
-  Zap,
-  Globe,
   BarChart3
 } from 'lucide-react';
 

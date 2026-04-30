@@ -8,8 +8,6 @@ import {
   ArrowDownCircle, 
   Lock, 
   Unlock,
-  History,
-  AlertCircle,
   Plus,
   Minus
 } from 'lucide-react';

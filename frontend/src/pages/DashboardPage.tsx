@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   ArrowUpRight,
   ArrowDownRight,
-  ArrowRight,
+  Plus,
   Download
 } from 'lucide-react';
 
