@@ -159,9 +159,9 @@ class Command(BaseCommand):
         caja = abrir_caja(user, empresa, Decimal("150000.00"))
 
         # 9. Ventas e Ingresos
-        crear_venta_completa(user, empresa, [{"producto": prods_inst[4], "cantidad": 1}], "TICKET", "EFECTIVO", cliente=clients_inst[0])
-        crear_venta_completa(user, empresa, [{"producto": prods_inst[11], "cantidad": 2}], "TICKET", "TARJETA", cliente=clients_inst[1])
-        crear_venta_completa(user, empresa, [{"producto": prods_inst[0], "cantidad": 1}], "FACTURA", "CUENTA_CORRIENTE", cliente=clients_inst[3])
+        crear_venta_completa(user, empresa, [{"producto": prods_inst[4], "cantidad": 1}], "TICKET", [{"metodo_pago": "EFECTIVO", "monto": prods_inst[4].precio_venta}], cliente=clients_inst[0])
+        crear_venta_completa(user, empresa, [{"producto": prods_inst[11], "cantidad": 2}], "TICKET", [{"metodo_pago": "TARJETA", "monto": prods_inst[11].precio_venta * 2}], cliente=clients_inst[1])
+        crear_venta_completa(user, empresa, [{"producto": prods_inst[0], "cantidad": 1}], "FACTURA_B", [{"metodo_pago": "CUENTA_CORRIENTE", "monto": prods_inst[0].precio_venta}], cliente=clients_inst[3])
 
         # 10. Compras
         crear_compra_completa(user, empresa, prov_tech, [{"producto": prods_inst[12], "cantidad": 10, "precio_unitario": 2200}], "FACTURA", "0001-0000456", "EFECTIVO")
