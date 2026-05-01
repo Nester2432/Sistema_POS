@@ -26,7 +26,6 @@ export const POSPage = () => {
   const [cart, setCart] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [cliente, setCliente] = useState<any>(null);
-  const [metodoPago, setMetodoPago] = useState('EFECTIVO');
   const [descuento, setDescuento] = useState(0);
   const [pagos, setPagos] = useState<any[]>([{ metodo_pago: 'EFECTIVO', monto: 0, referencia: '' }]);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
