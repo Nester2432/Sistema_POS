@@ -68,67 +68,70 @@ export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-400 uppercase">Proveedor</label>
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Proveedor</label>
           <select 
             required
-            className="w-full p-3 bg-slate-50 border rounded-xl outline-none"
+            className="w-full p-3.5 bg-slate-950/50 border border-white/5 rounded-2xl outline-none focus:border-accent-500/50 text-white font-medium appearance-none"
             value={proveedorId}
             onChange={e => setProveedorId(e.target.value)}
           >
-            <option value="">Seleccionar Proveedor...</option>
+            <option value="" className="bg-slate-900">Seleccionar Proveedor...</option>
             {proveedores.map((p: any) => (
-              <option key={p.id} value={p.id}>{p.nombre}</option>
+              <option key={p.id} value={p.id} className="bg-slate-900">{p.nombre}</option>
             ))}
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-400 uppercase">Nro. Factura</label>
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nro. Factura</label>
           <input 
             required
-            className="w-full p-3 bg-slate-50 border rounded-xl outline-none"
+            className="w-full p-3.5 bg-slate-950/50 border border-white/5 rounded-2xl outline-none focus:border-accent-500/50 text-white placeholder:text-slate-700 font-medium"
             value={nroFactura}
             onChange={e => setNroFactura(e.target.value)}
             placeholder="0001-00001234"
           />
         </div>
         <div className="space-y-2 col-span-full">
-          <label className="text-xs font-bold text-slate-400 uppercase">Método de Pago</label>
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Método de Pago</label>
           <select 
-            className="w-full p-3 bg-slate-50 border rounded-xl outline-none"
+            className="w-full p-3.5 bg-slate-950/50 border border-white/5 rounded-2xl outline-none focus:border-accent-500/50 text-white font-medium appearance-none"
             value={metodoPago}
             onChange={e => setMetodoPago(e.target.value)}
           >
-            <option value="EFECTIVO">Efectivo</option>
-            <option value="TRANSFERENCIA">Transferencia</option>
-            <option value="TARJETA">Tarjeta</option>
+            <option value="EFECTIVO" className="bg-slate-900">Efectivo</option>
+            <option value="TRANSFERENCIA" className="bg-slate-900">Transferencia</option>
+            <option value="TARJETA" className="bg-slate-900">Tarjeta</option>
           </select>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <label className="text-xs font-bold text-slate-400 uppercase">Añadir Productos</label>
+      <div className="space-y-3">
+        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Añadir Productos</label>
         <div className="relative">
           <input 
             type="text"
-            className="w-full p-3 bg-slate-50 border rounded-xl outline-none"
+            className="w-full p-4 bg-white/5 border border-white/5 rounded-2xl outline-none focus:border-accent-500/50 focus:bg-white/10 text-white placeholder:text-slate-700 font-bold transition-all"
             placeholder="Buscar por nombre o SKU..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           {search && productos.length > 0 && (
-            <div className="absolute top-full left-0 right-0 z-20 bg-white border shadow-xl rounded-xl mt-1 max-h-40 overflow-auto">
+            <div className="absolute top-full left-0 right-0 z-20 bg-slate-900 border border-white/10 shadow-2xl rounded-2xl mt-2 max-h-60 overflow-auto overflow-x-hidden">
               {productos.map((p: any) => (
                 <button 
                   key={p.id}
                   type="button"
                   onClick={() => addItem(p)}
-                  className="w-full p-3 text-left hover:bg-primary-50 border-b flex justify-between"
+                  className="w-full p-4 text-left hover:bg-white/5 border-b border-white/5 flex justify-between items-center transition-colors group"
                 >
-                  <span className="font-bold">{p.nombre}</span>
-                  <span className="text-slate-400">Coste: ${p.precio_costo}</span>
+                  <div>
+                    <p className="font-bold text-white group-hover:text-accent-500 transition-colors">{p.nombre}</p>
+                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{p.sku}</p>
+                  </div>
+                  <span className="text-sm font-black text-white bg-white/5 px-3 py-1 rounded-lg border border-white/5">${p.precio_costo}</span>
                 </button>
               ))}
             </div>
@@ -136,62 +139,76 @@ export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
         </div>
       </div>
 
-      <div className="border rounded-2xl overflow-hidden">
+      <div className="bg-slate-950/30 border border-white/5 rounded-3xl overflow-hidden shadow-inner">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b">
+          <thead className="bg-white/[0.02] border-b border-white/5">
             <tr>
-              <th className="p-3 text-left">Producto</th>
-              <th className="p-3 text-center w-24">Cant.</th>
-              <th className="p-3 text-center w-32">Precio Unit.</th>
-              <th className="p-3 text-right">Total</th>
-              <th className="p-3"></th>
+              <th className="p-4 text-left text-[10px] font-black text-slate-500 uppercase tracking-widest">Producto</th>
+              <th className="p-4 text-center w-24 text-[10px] font-black text-slate-500 uppercase tracking-widest">Cant.</th>
+              <th className="p-4 text-center w-32 text-[10px] font-black text-slate-500 uppercase tracking-widest">P. Unit.</th>
+              <th className="p-4 text-right text-[10px] font-black text-slate-500 uppercase tracking-widest">Total</th>
+              <th className="p-4 w-12"></th>
             </tr>
           </thead>
-          <tbody className="divide-y">
+          <tbody className="divide-y divide-white/5">
             {items.map(item => (
-              <tr key={item.producto_id}>
-                <td className="p-3 font-bold">{item.nombre}</td>
-                <td className="p-3">
+              <tr key={item.producto_id} className="hover:bg-white/[0.01] transition-colors">
+                <td className="p-4">
+                  <p className="font-bold text-white leading-tight">{item.nombre}</p>
+                </td>
+                <td className="p-4">
                   <input 
                     type="number" 
-                    className="w-full p-1 border rounded text-center"
+                    className="w-full bg-slate-900 border border-white/10 rounded-xl p-2 text-center text-white font-bold text-xs outline-none focus:border-accent-500"
                     value={item.cantidad}
                     onChange={e => updateItem(item.producto_id, 'cantidad', Number(e.target.value))}
                   />
                 </td>
-                <td className="p-3">
+                <td className="p-4">
                   <input 
                     type="number" 
-                    className="w-full p-1 border rounded text-center"
+                    className="w-full bg-slate-900 border border-white/10 rounded-xl p-2 text-center text-white font-bold text-xs outline-none focus:border-accent-500"
                     value={item.precio_unitario}
                     onChange={e => updateItem(item.producto_id, 'precio_unitario', Number(e.target.value))}
                   />
                 </td>
-                <td className="p-3 text-right font-bold">${(item.cantidad * item.precio_unitario).toFixed(2)}</td>
-                <td className="p-3 text-center">
-                  <button type="button" onClick={() => removeItem(item.producto_id)} className="text-rose-500"><Trash2 size={16}/></button>
+                <td className="p-4 text-right">
+                  <span className="font-black text-white tracking-tight">${(item.cantidad * item.precio_unitario).toLocaleString()}</span>
+                </td>
+                <td className="p-4 text-center">
+                  <button type="button" onClick={() => removeItem(item.producto_id)} className="text-slate-600 hover:text-rose-400 transition-colors">
+                    <Trash2 size={18}/>
+                  </button>
                 </td>
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={5} className="p-8 text-center text-slate-400 italic">No hay ítems en la compra</td></tr>
+              <tr><td colSpan={5} className="p-12 text-center text-slate-600 font-bold tracking-tight uppercase text-xs opacity-50">No hay ítems en la lista de compra</td></tr>
             )}
           </tbody>
-          <tfoot className="bg-slate-900 text-white font-bold">
+          <tfoot className="bg-white/5 border-t border-white/5">
             <tr>
-              <td colSpan={3} className="p-3 text-right">TOTAL COMPRA:</td>
-              <td className="p-3 text-right text-lg">${total.toFixed(2)}</td>
+              <td colSpan={3} className="p-6 text-right text-[10px] font-black text-slate-500 uppercase tracking-widest">Total de la Operación:</td>
+              <td className="p-6 text-right">
+                <span className="text-3xl font-black text-white tracking-tighter">${total.toLocaleString()}</span>
+              </td>
               <td></td>
             </tr>
           </tfoot>
         </table>
       </div>
 
-      <div className="flex justify-end gap-3 pt-4">
-        <button type="button" onClick={onSuccess} className="px-6 py-2 font-bold text-slate-500">Cancelar</button>
+      <div className="flex justify-end gap-3 pt-8 border-t border-white/5">
         <button 
-          disabled={mutation.isPending || items.length === 0}
-          className="px-8 py-3 bg-primary-600 text-white font-bold rounded-xl shadow-lg disabled:bg-slate-300"
+          type="button" 
+          onClick={onSuccess} 
+          className="px-8 py-4 text-slate-500 font-black text-xs uppercase tracking-widest hover:text-white transition-all"
+        >
+          Cancelar
+        </button>
+        <button 
+          disabled={mutation.isPending || items.length === 0 || !proveedorId}
+          className="px-10 py-4 bg-white text-slate-950 font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl hover:bg-slate-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
         >
           {mutation.isPending ? 'Procesando...' : 'Registrar Compra'}
         </button>
