@@ -58,6 +58,7 @@ def crear_compra_completa(
     # 2. Procesar Items e Inventario
     for item in items_data:
         producto = item['producto']
+        variante = item.get('variante')
         cantidad = Decimal(str(item['cantidad']))
         precio_unitario = Decimal(str(item['precio_unitario']))
         item_subtotal = cantidad * precio_unitario
@@ -66,6 +67,7 @@ def crear_compra_completa(
             empresa=empresa,
             compra=compra,
             producto=producto,
+            variante=variante,
             cantidad=cantidad,
             precio_unitario=precio_unitario,
             subtotal=item_subtotal
@@ -74,6 +76,7 @@ def crear_compra_completa(
         # Aumentar Stock
         registrar_movimiento_stock(
             producto=producto,
+            variante=variante,
             tipo=StockMovTipo.INGRESO,
             cantidad=cantidad,
             usuario=usuario,
@@ -81,9 +84,13 @@ def crear_compra_completa(
             sucursal=sucursal
         )
         
-        # Opcional: Actualizar precio de costo del producto
-        producto.precio_costo = precio_unitario
-        producto.save(update_fields=['precio_costo', 'updated_at'])
+        # Opcional: Actualizar precio de costo del producto o variante
+        if variante:
+            variante.precio_costo = precio_unitario
+            variante.save(update_fields=['precio_costo', 'updated_at'])
+        else:
+            producto.precio_costo = precio_unitario
+            producto.save(update_fields=['precio_costo', 'updated_at'])
         
         total_items += item_subtotal
 

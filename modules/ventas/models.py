@@ -64,6 +64,7 @@ class VentaItem(TenantModel):
     """
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name="items")
     producto = models.ForeignKey("inventario.Producto", on_delete=models.PROTECT)
+    variante = models.ForeignKey("variantes.ProductoVariante", on_delete=models.PROTECT, null=True, blank=True)
     
     cantidad = models.DecimalField(max_digits=12, decimal_places=3)
     precio_unitario = models.DecimalField(max_digits=12, decimal_places=2)

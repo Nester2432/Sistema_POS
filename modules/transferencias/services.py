@@ -30,6 +30,7 @@ def crear_transferencia(usuario, empresa, sucursal_origen, sucursal_destino, obs
             empresa=empresa,
             transferencia=transferencia,
             producto=item['producto'],
+            variante=item.get('variante'),
             cantidad=Decimal(str(item['cantidad']))
         )
         
@@ -51,20 +52,22 @@ def confirmar_transferencia(transferencia_id, usuario):
     if not items.exists():
         raise ValidationError("La transferencia no tiene productos para mover.")
 
-    # Ordenar por ID de producto para evitar deadlocks
-    producto_ids = [item.producto_id for item in items]
-    
     # Bloquear los registros de StockSucursal Origen
-    stocks_origen = StockSucursal.objects.select_for_update().filter(
-        sucursal=transferencia.sucursal_origen,
-        producto_id__in=producto_ids
-    )
-    
-    stock_dict = {s.producto_id: s for s in stocks_origen}
+    # Para variantes, necesitamos ser precisos en el bloqueo
+    for item in items:
+        StockSucursal.objects.select_for_update().filter(
+            sucursal=transferencia.sucursal_origen,
+            producto=item.producto,
+            variante=item.variante
+        ).first() # El first() dispara el SELECT FOR UPDATE
     
     # Validar que exista el stock antes de empezar a mover
     for item in items:
-        stock_disp = stock_dict.get(item.producto_id)
+        stock_disp = StockSucursal.objects.filter(
+            sucursal=transferencia.sucursal_origen,
+            producto=item.producto,
+            variante=item.variante
+        ).first()
         if not stock_disp or stock_disp.stock_actual < item.cantidad:
             raise ValidationError(f"Stock insuficiente para {item.producto.nombre} en la sucursal de origen.")
 
@@ -75,6 +78,7 @@ def confirmar_transferencia(transferencia_id, usuario):
         # 1. Descontar de origen
         registrar_movimiento_stock(
             producto=item.producto,
+            variante=item.variante,
             tipo=TipoMovimiento.EGRESO_TRANSFERENCIA,
             cantidad=item.cantidad,
             usuario=usuario,
@@ -85,6 +89,7 @@ def confirmar_transferencia(transferencia_id, usuario):
         # 2. Sumar en destino
         registrar_movimiento_stock(
             producto=item.producto,
+            variante=item.variante,
             tipo=TipoMovimiento.INGRESO_TRANSFERENCIA,
             cantidad=item.cantidad,
             usuario=usuario,

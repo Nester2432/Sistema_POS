@@ -80,6 +80,7 @@ class Producto(TenantModel):
     unidad_medida = models.CharField(max_length=10, choices=UnidadMedida.choices, default=UnidadMedida.UNIDAD)
     activo = models.BooleanField(default=True)
     imagen = models.ImageField(upload_to="productos/", null=True, blank=True)
+    tiene_variantes = models.BooleanField(default=False, verbose_name="¿Tiene variantes?")
 
     class Meta(TenantModel.Meta):
         verbose_name = "Producto"
@@ -107,6 +108,7 @@ class TipoMovimiento(models.TextChoices):
 
 class MovimientoStock(TenantModel):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="movimientos")
+    variante = models.ForeignKey("variantes.ProductoVariante", on_delete=models.PROTECT, related_name="movimientos", null=True, blank=True)
     sucursal = models.ForeignKey("sucursales.Sucursal", on_delete=models.PROTECT, related_name="movimientos", null=True, blank=True)
     tipo = models.CharField(max_length=50, choices=TipoMovimiento.choices)
     cantidad = models.DecimalField(max_digits=12, decimal_places=3)

@@ -91,10 +91,22 @@ def crear_venta_completa(
     # 3. Procesar Items
     for item in items_data:
         producto = item['producto']
+        variante = item.get('variante')
         cantidad = Decimal(str(item['cantidad']))
-        precio_unitario = producto.precio_venta
-        descuento_item = Decimal(str(item.get('descuento', 0)))
+
+        # Validaciones de variantes
+        if producto.tiene_variantes and not variante:
+            raise ValidationError(f"El producto '{producto.nombre}' requiere selección de variante.")
         
+        if variante and variante.producto_padre_id != producto.id:
+            raise ValidationError(f"La variante seleccionada no pertenece al producto '{producto.nombre}'.")
+
+        # Lógica de precio: variante sobreescribe al padre si > 0
+        precio_unitario = producto.precio_venta
+        if variante and variante.precio_venta > 0:
+            precio_unitario = variante.precio_venta
+            
+        descuento_item = Decimal(str(item.get('descuento', 0)))
         item_subtotal = (precio_unitario - descuento_item) * cantidad
         
         # Crear VentaItem
@@ -102,6 +114,7 @@ def crear_venta_completa(
             empresa=empresa,
             venta=venta,
             producto=producto,
+            variante=variante,
             cantidad=cantidad,
             precio_unitario=precio_unitario,
             descuento=descuento_item,
@@ -111,6 +124,7 @@ def crear_venta_completa(
         # 4. Descontar Stock
         registrar_movimiento_stock(
             producto=producto,
+            variante=variante,
             tipo=StockMovTipo.EGRESO,
             cantidad=cantidad,
             usuario=usuario,

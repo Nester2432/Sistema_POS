@@ -43,7 +43,8 @@ urlpatterns = [
     path("api/v1/sucursales/", include("modules.sucursales.urls")),
 
     # ─── Transferencias ───────────────────────────────────────
-    path("api/v1/transferencias/", include("modules.transferencias.urls")),
+    path('api/v1/transferencias/', include('modules.transferencias.urls')),
+    path('api/v1/variantes/', include('modules.variantes.urls')),
 ]
 
 # ─── Debug Toolbar (solo en local) ────────────────────────────

@@ -10,10 +10,14 @@ import api from '../../api/axios';
 
 interface ProductoSeleccionado {
   producto_id: string;
+  variante_id?: string;
   nombre: string;
   sku: string;
   cantidad: number;
 }
+
+import { VarianteSelectorModal } from '../POS/VarianteSelectorModal';
+import type { ProductoVariante } from '../../types/variantes';
 
 export const NuevaTransferenciaPage = () => {
   const navigate = useNavigate();
@@ -27,6 +31,7 @@ export const NuevaTransferenciaPage = () => {
   // Buscador de productos
   const [search, setSearch] = useState('');
   const [items, setItems] = useState<ProductoSeleccionado[]>([]);
+  const [variantProduct, setVariantProduct] = useState<any>(null);
 
   // Buscar productos (usamos el listado normal)
   const { data: productosRaw } = useQuery({
@@ -44,27 +49,38 @@ export const NuevaTransferenciaPage = () => {
     p.sku.toLowerCase().includes(search.toLowerCase())
   ).slice(0, 5);
 
-  const agregarProducto = (prod: any) => {
-    if (items.find(i => i.producto_id === prod.id)) {
+  const agregarProducto = (prod: any, variante?: ProductoVariante) => {
+    if (prod.tiene_variantes && !variante) {
+      setVariantProduct(prod);
+      return;
+    }
+
+    const itemName = variante ? `${prod.nombre} (${variante.valores_detalle.map(v => v.valor_nombre).join('/')})` : prod.nombre;
+    const itemSku = variante ? variante.sku : prod.sku;
+
+    if (items.find(i => i.producto_id === prod.id && i.variante_id === variante?.id)) {
       toast.error('El producto ya está en la lista.');
       return;
     }
+    
     setItems([...items, {
       producto_id: prod.id,
-      nombre: prod.nombre,
-      sku: prod.sku,
+      variante_id: variante?.id,
+      nombre: itemName,
+      sku: itemSku,
       cantidad: 1
     }]);
     setSearch('');
+    setVariantProduct(null);
   };
 
-  const actualizarCantidad = (id: string, qty: number) => {
+  const actualizarCantidad = (prodId: string, varId: string | undefined, qty: number) => {
     if (qty <= 0) return;
-    setItems(items.map(i => i.producto_id === id ? { ...i, cantidad: qty } : i));
+    setItems(items.map(i => (i.producto_id === prodId && i.variante_id === varId) ? { ...i, cantidad: qty } : i));
   };
 
-  const removerItem = (id: string) => {
-    setItems(items.filter(i => i.producto_id !== id));
+  const removerItem = (prodId: string, varId: string | undefined) => {
+    setItems(items.filter(i => !(i.producto_id === prodId && i.variante_id === varId)));
   };
 
   const createMutation = useMutation({
@@ -89,7 +105,11 @@ export const NuevaTransferenciaPage = () => {
     createMutation.mutate({
       sucursal_destino: destinoId,
       observaciones,
-      items: items.map(i => ({ producto: i.producto_id, cantidad: i.cantidad }))
+      items: items.map(i => ({ 
+        producto: i.producto_id, 
+        variante: i.variante_id,
+        cantidad: i.cantidad 
+      }))
     });
   };
 
@@ -151,7 +171,7 @@ export const NuevaTransferenciaPage = () => {
             ) : (
               <div className="space-y-2">
                 {items.map(item => (
-                  <div key={item.producto_id} className="flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-white/5">
+                  <div key={`${item.producto_id}-${item.variante_id}`} className="flex items-center gap-4 bg-slate-950/50 p-3 rounded-xl border border-white/5">
                     <div className="flex-1">
                       <p className="text-sm font-medium text-white">{item.nombre}</p>
                       <p className="text-xs text-slate-500">{item.sku}</p>
@@ -161,11 +181,11 @@ export const NuevaTransferenciaPage = () => {
                         type="number" 
                         min="1"
                         value={item.cantidad}
-                        onChange={(e) => actualizarCantidad(item.producto_id, parseFloat(e.target.value))}
+                        onChange={(e) => actualizarCantidad(item.producto_id, item.variante_id, parseFloat(e.target.value))}
                         className="w-20 bg-slate-900 border border-white/10 rounded-lg px-3 py-1.5 text-white text-center focus:ring-1 focus:ring-accent-500 outline-none"
                       />
                       <button 
-                        onClick={() => removerItem(item.producto_id)}
+                        onClick={() => removerItem(item.producto_id, item.variante_id)}
                         className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
                       >
                         <Trash2 size={16} />
@@ -227,6 +247,13 @@ export const NuevaTransferenciaPage = () => {
           </form>
         </div>
       </div>
+      {variantProduct && (
+        <VarianteSelectorModal 
+          producto={variantProduct}
+          onSelect={(v) => agregarProducto(variantProduct, v)}
+          onClose={() => setVariantProduct(null)}
+        />
+      )}
     </div>
   );
 };

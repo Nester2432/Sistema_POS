@@ -69,12 +69,13 @@ class TransferenciaStock(TenantModel):
 class TransferenciaItem(TenantModel):
     transferencia = models.ForeignKey(TransferenciaStock, on_delete=models.CASCADE, related_name="items")
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+    variante = models.ForeignKey("variantes.ProductoVariante", on_delete=models.PROTECT, null=True, blank=True)
     cantidad = models.DecimalField(max_digits=12, decimal_places=3)
 
     class Meta(TenantModel.Meta):
         verbose_name = "Item de Transferencia"
         verbose_name_plural = "Items de Transferencia"
-        unique_together = ('transferencia', 'producto')
+        unique_together = ('transferencia', 'producto', 'variante')
 
     def __str__(self):
         return f"{self.cantidad}x {self.producto.nombre}"

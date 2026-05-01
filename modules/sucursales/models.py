@@ -42,6 +42,7 @@ class StockSucursal(TenantModel):
     """
     sucursal = models.ForeignKey(Sucursal, on_delete=models.CASCADE, related_name="inventario")
     producto = models.ForeignKey("inventario.Producto", on_delete=models.CASCADE, related_name="stocks_sucursales")
+    variante = models.ForeignKey("variantes.ProductoVariante", on_delete=models.CASCADE, related_name="stocks_sucursales", null=True, blank=True)
     
     stock_actual = models.DecimalField(
         max_digits=12, 
@@ -61,7 +62,7 @@ class StockSucursal(TenantModel):
     class Meta(TenantModel.Meta):
         verbose_name = "Stock por Sucursal"
         verbose_name_plural = "Stocks por Sucursal"
-        unique_together = ("sucursal", "producto")
+        unique_together = ("sucursal", "producto", "variante")
 
     def __str__(self):
         return f"{self.producto.nombre} en {self.sucursal.nombre}: {self.stock_actual}"

@@ -11,13 +11,17 @@ import {
   Edit, 
   Trash2, 
   AlertCircle,
-  Package
+  Package,
+  Layers
 } from 'lucide-react';
+import { VariantesModal } from './Inventario/VariantesModal';
 
 export const InventoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isVariantesOpen, setIsVariantesOpen] = useState(false);
+  const [variantProduct, setVariantProduct] = useState<any>(null);
   
   const { data, isLoading } = useQuery({
     queryKey: ['productos', searchTerm],
@@ -119,15 +123,22 @@ export const InventoryPage = () => {
                   <p className="text-[10px] text-slate-500 font-medium">Costo: ${Number(product.precio_costo).toLocaleString()}</p>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <div className="flex items-center justify-end gap-1">
+                  <div className="flex justify-end gap-2">
+                    <button 
+                      onClick={() => { setVariantProduct(product); setIsVariantesOpen(true); }}
+                      className="p-2 text-slate-500 hover:text-accent-500 hover:bg-accent-500/10 rounded-lg transition-all"
+                      title="Gestionar Variantes"
+                    >
+                      <Layers size={18} />
+                    </button>
                     <button 
                       onClick={() => { setSelectedProduct(product); setIsModalOpen(true); }}
-                      className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+                      className="p-2 text-slate-500 hover:text-white hover:bg-white/10 rounded-lg transition-all"
                     >
-                      <Edit size={16} />
+                      <Edit size={18} />
                     </button>
-                    <button className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/5 rounded-lg transition-all">
-                      <Trash2 size={16} />
+                    <button className="p-2 text-slate-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all">
+                      <Trash2 size={18} />
                     </button>
                   </div>
                 </td>
@@ -137,14 +148,21 @@ export const InventoryPage = () => {
         </table>
       </div>
 
+      {isVariantesOpen && variantProduct && (
+        <VariantesModal 
+          producto={variantProduct}
+          onClose={() => { setIsVariantesOpen(false); setVariantProduct(null); }}
+        />
+      )}
+
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         title={selectedProduct ? 'Editar Producto' : 'Nuevo Producto'}
       >
         <ProductForm 
-          onSuccess={() => setIsModalOpen(false)} 
           initialData={selectedProduct} 
+          onSuccess={() => setIsModalOpen(false)} 
         />
       </Modal>
     </div>

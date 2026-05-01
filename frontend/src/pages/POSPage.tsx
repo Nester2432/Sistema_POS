@@ -18,6 +18,8 @@ import {
   Loader2,
   X
 } from 'lucide-react';
+import { VarianteSelectorModal } from './POS/VarianteSelectorModal';
+import type { ProductoVariante } from '../types/variantes';
 
 export const POSPage = () => {
   const queryClient = useQueryClient();
@@ -28,6 +30,7 @@ export const POSPage = () => {
   const [descuento, setDescuento] = useState(0);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [lastVenta, setLastVenta] = useState<any>(null);
+  const [variantProduct, setVariantProduct] = useState<any>(null);
 
   // 1. Verificar Estado de Caja
   const { data: caja } = useQuery({
@@ -59,21 +62,39 @@ export const POSPage = () => {
     }
   });
 
-  const addToCart = (product: any) => {
-    const existing = cart.find(item => item.id === product.id);
+  const addToCart = (product: any, variante?: ProductoVariante) => {
+    // Si el producto tiene variantes y no se ha pasado una, abrir modal
+    if (product.tiene_variantes && !variante) {
+      setVariantProduct(product);
+      return;
+    }
+
+    const itemId = variante ? `${product.id}-${variante.id}` : `${product.id}`;
+    const itemPrice = variante && Number(variante.precio_venta) > 0 ? Number(variante.precio_venta) : Number(product.precio_venta);
+    const itemName = variante ? `${product.nombre} (${variante.valores_detalle.map(v => v.valor_nombre).join('/')})` : product.nombre;
+
+    const existing = cart.find(item => item.cartId === itemId);
     if (existing) {
       setCart(cart.map(item => 
-        item.id === product.id ? { ...item, cantidad: item.cantidad + 1 } : item
+        item.cartId === itemId ? { ...item, cantidad: item.cantidad + 1 } : item
       ));
     } else {
-      setCart([...cart, { ...product, cantidad: 1 }]);
+      setCart([...cart, { 
+        ...product, 
+        cartId: itemId,
+        varianteId: variante?.id,
+        nombre: itemName,
+        precio_venta: itemPrice,
+        cantidad: 1 
+      }]);
     }
     setSearch('');
+    setVariantProduct(null);
   };
 
-  const updateQuantity = (id: number, delta: number) => {
+  const updateQuantity = (cartId: string, delta: number) => {
     setCart(cart.map(item => {
-      if (item.id === id) {
+      if (item.cartId === cartId) {
         const newQty = Math.max(1, item.cantidad + delta);
         return { ...item, cantidad: newQty };
       }
@@ -81,8 +102,8 @@ export const POSPage = () => {
     }));
   };
 
-  const removeFromCart = (id: number) => {
-    setCart(cart.filter(item => item.id !== id));
+  const removeFromCart = (cartId: string) => {
+    setCart(cart.filter(item => item.cartId !== cartId));
   };
 
   const subtotal = cart.reduce((acc, item) => acc + (item.precio_venta * item.cantidad), 0);
@@ -102,7 +123,11 @@ export const POSPage = () => {
 
   const handleFinalize = () => {
     mutation.mutate({
-      items: cart.map(item => ({ producto_id: item.id, cantidad: item.cantidad })),
+      items: cart.map(item => ({ 
+        producto_id: item.id, 
+        variante_id: item.varianteId,
+        cantidad: item.cantidad 
+      })),
       tipo_comprobante: 'TICKET',
       metodo_pago: metodoPago,
       cliente_id: cliente?.id,
@@ -310,7 +335,16 @@ export const POSPage = () => {
         </div>
       </div>
 
-      <Modal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} title="Operación Exitosa">
+      {variantProduct && (
+        <VarianteSelectorModal 
+          producto={variantProduct}
+          onSelect={(v) => addToCart(variantProduct, v)}
+          onClose={() => setVariantProduct(null)}
+        />
+      )}
+
+      {isSuccessModalOpen && lastVenta && (
+        <Modal isOpen={isSuccessModalOpen} onClose={() => setIsSuccessModalOpen(false)} title="Operación Exitosa">
         <div className="text-center space-y-6 p-2">
           <div className="flex justify-center">
             <div className="p-5 bg-emerald-500/10 text-emerald-500 rounded-full border border-emerald-500/20">
@@ -339,6 +373,7 @@ export const POSPage = () => {
           </div>
         </div>
       </Modal>
+      )}
     </div>
   );
 };

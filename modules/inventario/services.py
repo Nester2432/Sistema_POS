@@ -18,7 +18,8 @@ def registrar_movimiento_stock(
     cantidad: Decimal,
     usuario,
     motivo: str = "",
-    sucursal: Sucursal = None
+    sucursal: Sucursal = None,
+    variante = None
 ) -> MovimientoStock:
     """
     Registra un movimiento de stock y actualiza el stock actual del producto.
@@ -37,6 +38,7 @@ def registrar_movimiento_stock(
         empresa=producto.empresa,
         sucursal=sucursal,
         producto=producto,
+        variante=variante,
         defaults={'stock_actual': Decimal('0.00'), 'stock_minimo': Decimal('0.00')}
     )
 
@@ -58,6 +60,7 @@ def registrar_movimiento_stock(
         empresa=producto.empresa,
         sucursal=sucursal,
         producto=producto,
+        variante=variante,
         tipo=tipo,
         cantidad=cantidad,
         stock_anterior=stock_anterior_sucursal,
