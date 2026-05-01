@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from decimal import Decimal
 import logging
 
-from .models import Venta, VentaItem, VentaEstado, TipoComprobante
+from .models import Venta, VentaItem, VentaPago, VentaEstado, TipoComprobante
 from modules.inventario.services import registrar_movimiento_stock
 from modules.inventario.models import TipoMovimiento as StockMovTipo
 from modules.caja.services import registrar_movimiento_caja, obtener_caja_abierta_usuario
@@ -46,7 +46,7 @@ def crear_venta_completa(
     empresa,
     items_data: list,
     tipo_comprobante: str,
-    metodo_pago: str,
+    pagos_data: list, # Lista de dicts: {'metodo_pago': str, 'monto': Decimal, 'referencia': str}
     cliente=None, # Instancia de Cliente
     cliente_nombre: str = "Consumidor Final",
     cliente_documento: str = "",
@@ -77,7 +77,6 @@ def crear_venta_completa(
         cliente_documento=cliente_documento if not cliente else cliente.documento,
         numero_comprobante=generar_numero_comprobante(empresa.id, tipo_comprobante),
         tipo_comprobante=tipo_comprobante,
-        metodo_pago=metodo_pago,
         descuento_total=descuento_total,
         observaciones=observaciones,
         estado=VentaEstado.CONFIRMADA # Se confirma de inmediato en el POS
@@ -139,25 +138,64 @@ def crear_venta_completa(
     # Simplificación: impuestos incluidos en el precio o calculados sobre subtotal
     # Aquí asumimos que el total es subtotal - descuento_total
     venta.total = subtotal_venta - descuento_total
+    
+    # 6. Validar y Registrar Pagos
+    total_pagado = sum(Decimal(str(p['monto'])) for p in pagos_data)
+    if total_pagado != venta.total:
+        raise ValidationError(f"La suma de los pagos ({total_pagado}) no coincide con el total de la venta ({venta.total}).")
+
+    # Seteamos el metodo_pago legacy
+    if len(pagos_data) == 1:
+        venta.metodo_pago = pagos_data[0]['metodo_pago']
+    else:
+        venta.metodo_pago = "MIXTO"
+    
     venta.save()
 
-    # 6. Registrar Cobro o Deuda
-    if metodo_pago == "CUENTA_CORRIENTE":
-        if not cliente:
-            raise ValidationError("Debe seleccionar un cliente para vender a Cuenta Corriente.")
-        
-        from modules.clientes.services import registrar_debito_venta
-        registrar_debito_venta(venta, usuario)
-    else:
-        registrar_movimiento_caja(
-            caja=caja,
-            tipo=CajaMovTipo.VENTA,
-            monto=venta.total,
-            concepto=f"Venta {venta.numero_comprobante}",
-            usuario=usuario,
-            metodo_pago=metodo_pago,
-            referencia=str(venta.id)
+    for p_data in pagos_data:
+        monto_pago = Decimal(str(p_data['monto']))
+        metodo = p_data['metodo_pago']
+        referencia_pago = p_data.get('referencia', '')
+
+        # Crear registro de pago
+        VentaPago.objects.create(
+            empresa=empresa,
+            venta=venta,
+            metodo_pago=metodo,
+            monto=monto_pago,
+            referencia=referencia_pago
         )
+
+        # Integración con Caja o CC
+        if metodo == "CUENTA_CORRIENTE":
+            if not cliente:
+                raise ValidationError("Debe seleccionar un cliente para vender a Cuenta Corriente.")
+            from modules.clientes.services import registrar_debito_venta
+            # Nota: registrar_debito_venta asume el total de la venta, 
+            # pero aquí el cliente podría pagar una parte en efectivo y otra en CC.
+            # Necesitamos un servicio que registre el monto específico.
+            # Por ahora, simulamos o extendemos el de clientes si es necesario.
+            # Como el requerimiento dice "registrar débito en cuenta corriente", 
+            # asumiremos que registrar_debito_venta puede recibir un monto.
+            from modules.clientes.services import registrar_movimiento_cc
+            registrar_movimiento_cc(
+                cliente=cliente,
+                monto=monto_pago,
+                tipo='DEBITO',
+                concepto=f"Venta {venta.numero_comprobante} (Parte CC)",
+                usuario=usuario,
+                referencia=str(venta.id)
+            )
+        else:
+            registrar_movimiento_caja(
+                caja=caja,
+                tipo=CajaMovTipo.VENTA,
+                monto=monto_pago,
+                concepto=f"Venta {venta.numero_comprobante}",
+                usuario=usuario,
+                metodo_pago=metodo,
+                referencia=str(venta.id)
+            )
 
     return venta
 
@@ -184,22 +222,33 @@ def anular_venta(venta: Venta, usuario_anula, sucursal=None) -> Venta:
             sucursal=sucursal
         )
 
-    # 2. Registrar Devolución en Caja (si la caja original sigue abierta o en la actual)
+    # 2. Revertir Pagos
     caja_actual = obtener_caja_abierta_usuario(usuario_anula, venta.empresa_id)
     if not caja_actual:
-        # Si no hay caja abierta, usamos la de la venta original (pero validando estado)
         caja_actual = venta.caja
     
-    if caja_actual.estado == "ABIERTA":
-        registrar_movimiento_caja(
-            caja=caja_actual,
-            tipo=CajaMovTipo.DEVOLUCION,
-            monto=venta.total,
-            concepto=f"Devolución por Anulación {venta.numero_comprobante}",
-            usuario=usuario_anula,
-            metodo_pago=venta.metodo_pago,
-            referencia=str(venta.id)
-        )
+    for pago in venta.pagos.all():
+        if pago.metodo_pago == "CUENTA_CORRIENTE":
+            from modules.clientes.services import registrar_movimiento_cc
+            registrar_movimiento_cc(
+                cliente=venta.cliente,
+                monto=pago.monto,
+                tipo='CREDITO',
+                concepto=f"Anulación Venta {venta.numero_comprobante} (Reversión CC)",
+                usuario=usuario_anula,
+                referencia=str(venta.id)
+            )
+        else:
+            if caja_actual.estado == "ABIERTA":
+                registrar_movimiento_caja(
+                    caja=caja_actual,
+                    tipo=CajaMovTipo.DEVOLUCION,
+                    monto=pago.monto,
+                    concepto=f"Devolución por Anulación {venta.numero_comprobante} ({pago.metodo_pago})",
+                    usuario=usuario_anula,
+                    metodo_pago=pago.metodo_pago,
+                    referencia=str(venta.id)
+                )
     else:
         logger.warning(f"Venta {venta.numero_comprobante} anulada sin movimiento de caja (caja cerrada).")
 

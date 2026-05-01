@@ -4,8 +4,15 @@ modules/ventas/serializers.py
 Serializers para el proceso de venta POS.
 """
 from rest_framework import serializers
-from .models import Venta, VentaItem
+from .models import Venta, VentaItem, VentaPago
 from modules.inventario.models import Producto
+
+class VentaPagoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VentaPago
+        fields = ["id", "metodo_pago", "monto", "referencia", "fecha"]
+        read_only_fields = ["id", "fecha"]
+
 
 class VentaItemSerializer(serializers.ModelSerializer):
     producto_nombre = serializers.ReadOnlyField(source='producto.nombre')
@@ -18,6 +25,7 @@ class VentaItemSerializer(serializers.ModelSerializer):
 
 class VentaDetailSerializer(serializers.ModelSerializer):
     items = VentaItemSerializer(many=True, read_only=True)
+    pagos = VentaPagoSerializer(many=True, read_only=True)
     usuario_nombre = serializers.ReadOnlyField(source='usuario.nombre_completo')
 
     class Meta:
@@ -25,7 +33,7 @@ class VentaDetailSerializer(serializers.ModelSerializer):
         fields = [
             "id", "numero_comprobante", "tipo_comprobante", "fecha", "usuario_nombre",
             "cliente_nombre", "cliente_documento", "subtotal", "descuento_total", 
-            "impuestos", "total", "estado", "metodo_pago", "items", "observaciones"
+            "impuestos", "total", "estado", "metodo_pago", "items", "pagos", "observaciones"
         ]
         read_only_fields = ["id", "numero_comprobante", "estado", "total"]
 
@@ -36,13 +44,19 @@ class CreateVentaItemSerializer(serializers.Serializer):
     descuento = serializers.DecimalField(max_digits=12, decimal_places=2, default=0)
 
 
+class CreateVentaPagoSerializer(serializers.Serializer):
+    metodo_pago = serializers.CharField()
+    monto = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0.01)
+    referencia = serializers.CharField(required=False, allow_blank=True, default="")
+
+
 class CreateVentaSerializer(serializers.Serializer):
     """
     Serializer para recibir el payload del POS.
     """
     items = CreateVentaItemSerializer(many=True)
+    pagos = CreateVentaPagoSerializer(many=True)
     tipo_comprobante = serializers.ChoiceField(choices=[("TICKET", "Ticket"), ("FACTURA_A", "Factura A"), ("FACTURA_B", "Factura B"), ("FACTURA_C", "Factura C")])
-    metodo_pago = serializers.CharField(default="EFECTIVO")
     cliente_id = serializers.UUIDField(required=False, allow_null=True)
     cliente_nombre = serializers.CharField(default="Consumidor Final")
     cliente_documento = serializers.CharField(required=False, allow_blank=True)

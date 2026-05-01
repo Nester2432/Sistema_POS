@@ -28,6 +28,7 @@ export const POSPage = () => {
   const [cliente, setCliente] = useState<any>(null);
   const [metodoPago, setMetodoPago] = useState('EFECTIVO');
   const [descuento, setDescuento] = useState(0);
+  const [pagos, setPagos] = useState<any[]>([{ metodo_pago: 'EFECTIVO', monto: 0, referencia: '' }]);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [lastVenta, setLastVenta] = useState<any>(null);
   const [variantProduct, setVariantProduct] = useState<any>(null);
@@ -110,6 +111,8 @@ export const POSPage = () => {
 
   const subtotal = cart.reduce((acc, item) => acc + (item.precio_venta * item.cantidad), 0);
   const total = subtotal - descuento;
+  const totalPagado = pagos.reduce((acc, p) => acc + Number(p.monto || 0), 0);
+  const restante = total - totalPagado;
 
   const mutation = useMutation({
     mutationFn: (data: any) => api.post('/ventas/ventas/', data),
@@ -118,23 +121,47 @@ export const POSPage = () => {
       setCart([]);
       setCliente(null);
       setDescuento(0);
+      setPagos([{ metodo_pago: 'EFECTIVO', monto: 0, referencia: '' }]);
       setIsSuccessModalOpen(true);
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
     }
   });
 
   const handleFinalize = () => {
+    if (Math.abs(restante) > 0.01) return; // Validación de seguridad extra
+
     mutation.mutate({
       items: cart.map(item => ({ 
         producto_id: item.id, 
         variante_id: item.varianteId,
         cantidad: item.cantidad 
       })),
+      pagos: pagos.filter(p => Number(p.monto) > 0),
       tipo_comprobante: 'TICKET',
-      metodo_pago: metodoPago,
       cliente_id: cliente?.id,
       descuento_total: descuento
     });
+  };
+
+  const addPago = () => {
+    setPagos([...pagos, { metodo_pago: 'EFECTIVO', monto: 0, referencia: '' }]);
+  };
+
+  const updatePago = (index: number, field: string, value: any) => {
+    const newPagos = [...pagos];
+    newPagos[index] = { ...newPagos[index], [field]: value };
+    setPagos(newPagos);
+  };
+
+  const removePago = (index: number) => {
+    setPagos(pagos.filter((_, i) => i !== index));
+  };
+
+  const completarRestante = (index: number) => {
+    const newPagos = [...pagos];
+    const currentMonto = Number(newPagos[index].monto || 0);
+    newPagos[index].monto = (currentMonto + restante).toFixed(2);
+    setPagos(newPagos);
   };
 
   if (!caja) {
@@ -297,35 +324,80 @@ export const POSPage = () => {
           )}
         </div>
 
-        {/* Totales */}
-        <div className="p-6 bg-slate-950/80 backdrop-blur-md border-t border-white/5 space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between text-slate-500 text-xs">
-              <span>Subtotal</span>
-              <span className="text-white font-medium">${subtotal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-end pt-3 border-t border-white/5">
+        {/* Sección de Pagos Divididos */}
+        <div className="p-6 bg-slate-950/80 backdrop-blur-md border-t border-white/5 space-y-6">
+          <div className="flex justify-between items-end border-b border-white/5 pb-4">
+            <div className="space-y-1">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Total a Pagar</span>
-              <span className="text-4xl font-bold text-white tracking-tight">${total.toLocaleString()}</span>
+              <p className="text-4xl font-bold text-white tracking-tight">${total.toLocaleString()}</p>
+            </div>
+            <div className="text-right space-y-1">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Restante</span>
+              <p className={`text-xl font-bold tracking-tight ${Math.abs(restante) < 0.01 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                ${restante.toLocaleString()}
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2">
-            {['EFECTIVO', 'TRANSFERENCIA'].map(metodo => (
-              <button 
-                key={metodo}
-                onClick={() => setMetodoPago(metodo)}
-                className={`py-2 rounded-xl text-[10px] font-bold tracking-widest transition-all border ${metodoPago === metodo ? 'bg-white text-slate-950 border-white' : 'bg-white/5 text-slate-500 border-white/5'}`}
-              >
-                {metodo}
-              </button>
+          <div className="space-y-3 max-h-48 overflow-auto pr-1">
+            {pagos.map((pago, index) => (
+              <div key={index} className="space-y-2 p-3 bg-white/5 rounded-xl border border-white/5 relative group">
+                <div className="flex gap-2">
+                  <select 
+                    className="flex-1 bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-white outline-none focus:border-accent-500"
+                    value={pago.metodo_pago}
+                    onChange={(e) => updatePago(index, 'metodo_pago', e.target.value)}
+                  >
+                    <option value="EFECTIVO">Efectivo</option>
+                    <option value="TARJETA">Tarjeta</option>
+                    <option value="TRANSFERENCIA">Transferencia</option>
+                    <option value="MERCADO_PAGO">Mercado Pago</option>
+                    <option value="CUENTA_CORRIENTE">Cuenta Corriente</option>
+                  </select>
+                  <input 
+                    type="number"
+                    step="0.01"
+                    placeholder="Monto"
+                    className="w-28 bg-slate-900 border border-white/10 rounded-lg p-2 text-xs text-white text-right font-bold outline-none focus:border-accent-500"
+                    value={pago.monto}
+                    onChange={(e) => updatePago(index, 'monto', e.target.value)}
+                  />
+                  {pagos.length > 1 && (
+                    <button onClick={() => removePago(index)} className="p-2 text-slate-600 hover:text-rose-400">
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
+                <div className="flex justify-between items-center gap-2">
+                  <input 
+                    type="text"
+                    placeholder="Referencia (opcional)"
+                    className="flex-1 bg-transparent border-none text-[10px] text-slate-500 outline-none placeholder:text-slate-700 font-medium"
+                    value={pago.referencia}
+                    onChange={(e) => updatePago(index, 'referencia', e.target.value)}
+                  />
+                  <button 
+                    onClick={() => completarRestante(index)}
+                    className="text-[10px] font-black text-accent-500 uppercase tracking-widest hover:text-accent-400 transition-colors"
+                  >
+                    Completar Restante
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
 
+          <button 
+            onClick={addPago}
+            className="w-full py-2 border border-dashed border-white/10 rounded-xl text-[10px] font-bold text-slate-500 uppercase tracking-widest hover:bg-white/5 hover:text-white transition-all"
+          >
+            + Añadir otro método de pago
+          </button>
+
           <button
             onClick={handleFinalize}
-            disabled={cart.length === 0 || mutation.isPending}
-            className="w-full py-4 bg-white hover:bg-slate-200 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 text-base font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            disabled={cart.length === 0 || mutation.isPending || Math.abs(restante) > 0.01}
+            className="w-full py-4 bg-white hover:bg-slate-200 disabled:bg-slate-800/50 disabled:text-slate-600 text-slate-950 text-base font-bold rounded-2xl transition-all active:scale-[0.98] flex items-center justify-center gap-2 shadow-xl shadow-white/5"
           >
             {mutation.isPending ? <Loader2 className="animate-spin" size={20} /> : (
               <>

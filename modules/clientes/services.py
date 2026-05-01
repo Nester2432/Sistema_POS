@@ -64,6 +64,38 @@ def registrar_debito_venta(venta, usuario) -> MovimientoCuentaCorriente:
     return mov
 
 @transaction.atomic
+def registrar_movimiento_cc(cliente, monto: Decimal, tipo: str, concepto: str, usuario, referencia: str = None) -> MovimientoCuentaCorriente:
+    """
+    Registra un movimiento genérico en la CC (Débito o Crédito).
+    Útil para Split Payments o ajustes.
+    """
+    cc = cliente.cuenta_corriente
+    if not cc.activa:
+        raise ValidationError("La cuenta corriente del cliente está suspendida.")
+
+    if tipo == 'DEBITO':
+        # Validar límite (salvo admin/supervisor)
+        if usuario.rol not in ['admin', 'supervisor']:
+            if cc.limite_credito > 0 and (cc.saldo_actual + monto) > cc.limite_credito:
+                raise ValidationError(f"El cliente supera su límite de crédito ({cc.limite_credito}).")
+        cc.saldo_actual += monto
+    else:
+        cc.saldo_actual -= monto
+
+    mov = MovimientoCuentaCorriente.objects.create(
+        empresa=cliente.empresa,
+        cuenta=cc,
+        tipo=tipo,
+        concepto=concepto,
+        monto=monto,
+        referencia=referencia,
+        usuario=usuario
+    )
+    
+    cc.save()
+    return mov
+
+@transaction.atomic
 def registrar_pago_cc(cliente, monto: Decimal, usuario, metodo_pago: str, concepto: str = "Pago de cuenta corriente") -> MovimientoCuentaCorriente:
     """Registra un pago del cliente, reduce deuda e ingresa dinero en caja."""
     cc = cliente.cuenta_corriente

@@ -43,7 +43,10 @@ class Venta(TenantModel):
     total = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"))
     
     estado = models.CharField(max_length=20, choices=VentaEstado.choices, default=VentaEstado.BORRADOR)
-    metodo_pago = models.CharField(max_length=20, default="EFECTIVO")
+    
+    # Campo Legacy: se mantiene por compatibilidad, pero los pagos ahora están en VentaPago
+    # Si hay un solo pago, coincide con VentaPago.metodo_pago. Si hay varios, será "MIXTO".
+    metodo_pago = models.CharField(max_length=20, default="EFECTIVO", null=True, blank=True)
     
     observaciones = models.TextField(blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -77,3 +80,22 @@ class VentaItem(TenantModel):
 
     def __str__(self):
         return f"{self.producto.nombre} x {self.cantidad}"
+
+
+class VentaPago(TenantModel):
+    """
+    Representa un pago parcial o total de una venta.
+    """
+    venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name="pagos")
+    metodo_pago = models.CharField(max_length=20, default="EFECTIVO")
+    monto = models.DecimalField(max_digits=12, decimal_places=2)
+    referencia = models.CharField(max_length=100, blank=True, help_text="Nro de cupón, transf, etc.")
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta(TenantModel.Meta):
+        verbose_name = "Pago de Venta"
+        verbose_name_plural = "Pagos de Venta"
+        ordering = ["fecha"]
+
+    def __str__(self):
+        return f"{self.metodo_pago}: {self.monto}"
