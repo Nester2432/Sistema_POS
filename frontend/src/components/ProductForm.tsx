@@ -27,7 +27,8 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
     queryKey: ['categorias'],
     queryFn: async () => {
       const res = await api.get('/inventario/categorias/');
-      return res.data.data.results || [];
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     }
   });
 
@@ -35,7 +36,8 @@ export const ProductForm = ({ onSuccess, initialData }: ProductFormProps) => {
     queryKey: ['proveedores'],
     queryFn: async () => {
       const res = await api.get('/inventario/proveedores/');
-      return res.data.data.results || [];
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     }
   });
 

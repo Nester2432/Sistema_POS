@@ -46,8 +46,9 @@ export const POSPage = () => {
     queryKey: ['productos-pos', search],
     queryFn: async () => {
       if (search.length < 2) return [];
-      const response = await api.get(`/inventario/productos/?search=${search}`);
-      return response.data.data.results;
+      const res = await api.get(`/inventario/productos/?search=${search}`);
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     },
     enabled: search.length >= 2,
   });
@@ -58,7 +59,8 @@ export const POSPage = () => {
     queryKey: ['clientes-pos', clientSearch],
     queryFn: async () => {
       const res = await api.get(`/clientes/clientes/?search=${clientSearch}`);
-      return res.data.data.results;
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     }
   });
 

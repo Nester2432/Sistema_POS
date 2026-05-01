@@ -20,7 +20,8 @@ export const PurchasesPage = () => {
     queryKey: ['compras', searchTerm],
     queryFn: async () => {
       const res = await api.get(`/compras/compras/?search=${searchTerm}`);
-      return res.data.data.results || [];
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     }
   });
 

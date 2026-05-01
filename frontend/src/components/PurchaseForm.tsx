@@ -16,7 +16,8 @@ export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
     queryKey: ['productos-compras', search],
     queryFn: async () => {
       const res = await api.get(`/inventario/productos/?search=${search}`);
-      return res.data.data.results;
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     },
     enabled: search.length > 1
   });
@@ -26,7 +27,8 @@ export const PurchaseForm = ({ onSuccess }: { onSuccess: () => void }) => {
     queryKey: ['proveedores'],
     queryFn: async () => {
       const res = await api.get('/inventario/proveedores/');
-      return res.data.data.results;
+      const body = res.data;
+      return body.results || body.data?.results || body.data || [];
     }
   });
 

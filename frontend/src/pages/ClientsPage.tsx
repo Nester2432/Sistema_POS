@@ -23,7 +23,9 @@ export const ClientsPage = () => {
     queryKey: ['clientes', searchTerm],
     queryFn: async () => {
       const res = await api.get(`/clientes/clientes/?search=${searchTerm}`);
-      return res.data.data.results || [];
+      const body = res.data;
+      // Paginación directa o éxito envuelto
+      return body.results || body.data?.results || body.data || [];
     }
   });
 
