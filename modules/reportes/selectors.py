@@ -18,50 +18,57 @@ def get_dashboard_stats(empresa_id):
     """Resumen ejecutivo para el dashboard principal."""
     hoy = timezone.now().date()
     hace_7_dias = hoy - timedelta(days=7)
-    inicio_mes = hoy.replace(day=1)
-
-    # 1. Ventas
+    
+    # 1. Ventas (Venta.total es confiable para el dashboard)
     ventas_qs = Venta.objects.for_empresa(empresa_id).filter(estado=VentaEstado.CONFIRMADA)
     
     ventas_hoy = ventas_qs.filter(fecha__date=hoy).aggregate(total=Sum('total'), cant=Count('id'))
-    ventas_7_dias = ventas_qs.filter(fecha__date__gte=hace_7_dias).aggregate(total=Sum('total'))
-    ventas_mes = ventas_qs.filter(fecha__date__gte=inicio_mes).aggregate(total=Sum('total'))
+    
+    # Ventas recientes (Últimas 5)
+    ventas_recientes = ventas_qs.order_by('-fecha')[:5]
 
     # 2. Inventario & Caja
     productos_bajo_stock = Producto.objects.for_empresa(empresa_id).filter(
         activo=True, stock_actual__lte=F('stock_minimo')
     ).count()
     
-    caja_abierta = Caja.objects.for_empresa(empresa_id).filter(estado=CajaEstado.ABIERTA).exists()
+    # Valor Inventario (Costo)
+    valor_inventario = Producto.objects.for_empresa(empresa_id).filter(activo=True).aggregate(
+        total=Sum(F('stock_actual') * F('precio_costo'))
+    )['total'] or 0
 
-    # 3. Clientes
-    clientes_deuda = Cliente.objects.for_empresa(empresa_id).filter(
-        cuenta_corriente__saldo_actual__gt=0
-    ).aggregate(total_deuda=Sum('cuenta_corriente__saldo_actual'), cant=Count('id'))
-
-    # 4. Métodos de pago y Ranking
-    metodos_pago = ventas_qs.filter(fecha__date=hoy).values('metodo_pago').annotate(
-        total=Sum('total')
-    ).order_by('-total')
-
-    ranking_productos = VentaItem.objects.for_empresa(empresa_id).filter(
+    # 3. Métodos de Pago Hoy (Usar VentaPago para precisión total)
+    from modules.ventas.models import VentaPago
+    pagos_hoy = VentaPago.objects.filter(
+        venta__empresa_id=empresa_id,
         venta__estado=VentaEstado.CONFIRMADA,
-        venta__fecha__date__gte=hace_7_dias
-    ).values('producto__nombre').annotate(
-        cantidad=Sum('cantidad')
-    ).order_by('-cantidad')[:5]
+        fecha__date=hoy
+    ).values('metodo_pago').annotate(total=Sum('monto'))
+    
+    pagos_dict = {p['metodo_pago']: p['total'] for p in pagos_hoy}
+
+    # 4. Clientes Nuevos (Ejemplo: últimos 30 días)
+    clientes_nuevos = Cliente.objects.for_empresa(empresa_id).filter(
+        fecha_registro__date__gte=hoy - timedelta(days=30)
+    ).count() if hasattr(Cliente, 'fecha_registro') else Cliente.objects.for_empresa(empresa_id).count()
 
     return {
-        "ventas_hoy": ventas_hoy['total'] or 0,
+        "ventas_dia": ventas_hoy['total'] or 0,
         "cantidad_ventas_hoy": ventas_hoy['cant'],
-        "ventas_semana": ventas_7_dias['total'] or 0,
-        "ventas_mes": ventas_mes['total'] or 0,
-        "caja_abierta": caja_abierta,
-        "productos_bajo_stock": productos_bajo_stock,
-        "clientes_deuda_total": clientes_deuda['total_deuda'] or 0,
-        "clientes_deuda_cant": clientes_deuda['cant'],
-        "metodos_pago_hoy": list(metodos_pago),
-        "top_productos_semana": list(ranking_productos)
+        "clientes_nuevos": clientes_nuevos,
+        "stock_bajo": productos_bajo_stock,
+        "valor_inventario": valor_inventario,
+        "ventas_recientes": [
+            {
+                "id": v.id,
+                "cliente_nombre": v.cliente_nombre,
+                "total": v.total,
+                "fecha": v.fecha,
+                "metodo_pago": v.metodo_pago
+            } for v in ventas_recientes
+        ],
+        "pagos_por_metodo": pagos_dict,
+        "tendencia_ventas": 0 # TODO: Implementar lógica de tendencia si se desea
     }
 
 def get_reporte_ventas(empresa_id, fecha_inicio=None, fecha_fin=None):

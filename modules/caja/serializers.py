@@ -20,6 +20,9 @@ class MovimientoCajaSerializer(serializers.ModelSerializer):
 class CajaSerializer(serializers.ModelSerializer):
     usuario_apertura_nombre = serializers.ReadOnlyField(source='usuario_apertura.nombre_completo')
     usuario_cierre_nombre = serializers.ReadOnlyField(source='usuario_cierre.nombre_completo')
+    movimientos = MovimientoCajaSerializer(many=True, read_only=True)
+    total_ingresos = serializers.SerializerMethodField()
+    total_egresos = serializers.SerializerMethodField()
     
     class Meta:
         model = Caja
@@ -29,9 +32,18 @@ class CajaSerializer(serializers.ModelSerializer):
             "fecha_apertura", "fecha_cierre",
             "saldo_inicial", "saldo_final_declarado", 
             "saldo_final_calculado", "diferencia",
-            "estado", "observaciones"
+            "estado", "observaciones", "movimientos",
+            "total_ingresos", "total_egresos"
         ]
         read_only_fields = ["id", "usuario_apertura", "fecha_apertura", "saldo_final_calculado", "diferencia", "estado"]
+
+    def get_total_ingresos(self, obj):
+        from .models import TipoMovimientoCaja
+        return sum(m.monto for m in obj.movimientos.all() if m.tipo in [TipoMovimientoCaja.INGRESO, TipoMovimientoCaja.VENTA])
+
+    def get_total_egresos(self, obj):
+        from .models import TipoMovimientoCaja
+        return sum(m.monto for m in obj.movimientos.all() if m.tipo in [TipoMovimientoCaja.EGRESO, TipoMovimientoCaja.DEVOLUCION])
 
 
 class AperturaCajaSerializer(serializers.Serializer):
