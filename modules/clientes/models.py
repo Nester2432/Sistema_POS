@@ -77,6 +77,7 @@ class MovimientoCuentaCorriente(TenantModel):
     # Referencias opcionales
     venta = models.ForeignKey("ventas.Venta", on_delete=models.SET_NULL, null=True, blank=True)
     caja = models.ForeignKey("caja.Caja", on_delete=models.SET_NULL, null=True, blank=True)
+    referencia = models.CharField(max_length=100, blank=True, null=True, help_text="ID de venta u otro documento")
     
     usuario = models.ForeignKey("usuarios.Usuario", on_delete=models.PROTECT)
     fecha = models.DateTimeField(auto_now_add=True)
