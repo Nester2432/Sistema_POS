@@ -7,6 +7,7 @@ from django.db import models
 from decimal import Decimal
 
 from core.models import TenantModel
+from modules.caja.models import MetodoPago
 
 
 class TipoComprobante(models.TextChoices):
@@ -87,7 +88,7 @@ class VentaPago(TenantModel):
     Representa un pago parcial o total de una venta.
     """
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE, related_name="pagos")
-    metodo_pago = models.CharField(max_length=20, default="EFECTIVO")
+    metodo_pago = models.CharField(max_length=20, choices=MetodoPago.choices, default=MetodoPago.EFECTIVO)
     monto = models.DecimalField(max_digits=12, decimal_places=2)
     referencia = models.CharField(max_length=100, blank=True, help_text="Nro de cupón, transf, etc.")
     fecha = models.DateTimeField(auto_now_add=True)

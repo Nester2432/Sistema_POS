@@ -9,9 +9,13 @@ from .base import *  # noqa: F401, F403
 DEBUG = True
 
 # ─── Django Debug Toolbar ─────────────────────────────────────
-INSTALLED_APPS += ["debug_toolbar"]  # noqa: F405
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]  # noqa: F405
-INTERNAL_IPS = ["127.0.0.1"]
+import sys
+IS_RUNNING_TESTS = 'test' in sys.argv
+
+if not IS_RUNNING_TESTS:
+    INSTALLED_APPS += ["debug_toolbar"]  # noqa: F405
+    MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]  # noqa: F405
+    INTERNAL_IPS = ["127.0.0.1"]
 
 # ─── Logging detallado para desarrollo ───────────────────────
 LOGGING = {

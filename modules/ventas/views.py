@@ -67,7 +67,7 @@ class VentaViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='ticket-pdf')
     def ticket_pdf(self, request, pk=None):
         """GET /api/v1/ventas/{id}/ticket-pdf/"""
-        from modules.reportes.exports import generar_ticket_pdf
+        from .services_pdf import generar_ticket_pdf
         from django.http import HttpResponse
         
         venta = self.get_object()

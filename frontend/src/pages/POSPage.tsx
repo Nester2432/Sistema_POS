@@ -163,6 +163,16 @@ export const POSPage = () => {
     setPagos(newPagos);
   };
 
+  const handlePrintTicket = async (ventaId: number) => {
+    try {
+      const res = await api.get(`/ventas/ventas/${ventaId}/ticket-pdf/`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+      window.open(url, '_blank');
+    } catch (error) {
+      alert("Error al generar el ticket PDF");
+    }
+  };
+
   if (!caja) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-white/5 backdrop-blur-md rounded-2xl border border-white/5">
@@ -433,7 +443,10 @@ export const POSPage = () => {
             <p className="text-4xl font-bold text-white tracking-tight">${Number(lastVenta?.total).toLocaleString()}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-white/10">
+            <button 
+              onClick={() => handlePrintTicket(lastVenta.id)}
+              className="flex items-center justify-center gap-2 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-xs font-bold hover:bg-white/10"
+            >
               <Receipt size={16} />
               Ticket
             </button>

@@ -9,7 +9,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Plus,
-  Download
+  Download,
+  Receipt
 } from 'lucide-react';
 
 const StatCard = ({ title, value, icon: Icon, color, trend }: any) => (
@@ -102,9 +103,9 @@ export const DashboardPage = () => {
           </div>
           <div className="space-y-4">
             {stats?.ventas_recientes?.map((venta: any) => (
-              <div key={venta.id} className="flex items-center justify-between p-3 bg-white/[0.02] hover:bg-white/[0.05] rounded-xl border border-white/5 transition-colors">
+              <div key={venta.id} className="flex items-center justify-between p-3 bg-white/[0.02] hover:bg-white/[0.05] rounded-xl border border-white/5 transition-colors group/item">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400">
+                  <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-xs font-bold text-slate-400 group-hover/item:text-primary-400 transition-colors">
                     #{venta.id}
                   </div>
                   <div>
@@ -112,9 +113,24 @@ export const DashboardPage = () => {
                     <p className="text-[10px] text-slate-500 font-medium">{new Date(venta.fecha).toLocaleTimeString()} • {venta.metodo_pago}</p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-base font-bold text-white">${Number(venta.total).toLocaleString()}</p>
-                  <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Éxito</p>
+                <div className="flex items-center gap-4">
+                  <button 
+                    onClick={async () => {
+                      try {
+                        const res = await api.get(`/ventas/ventas/${venta.id}/ticket-pdf/`, { responseType: 'blob' });
+                        const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+                        window.open(url, '_blank');
+                      } catch (e) { alert("Error al generar ticket"); }
+                    }}
+                    className="p-2 bg-white/5 text-slate-500 hover:text-white rounded-lg opacity-0 group-hover/item:opacity-100 transition-all"
+                    title="Imprimir Ticket"
+                  >
+                    <Receipt size={16} />
+                  </button>
+                  <div className="text-right">
+                    <p className="text-base font-bold text-white">${Number(venta.total).toLocaleString()}</p>
+                    <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Éxito</p>
+                  </div>
                 </div>
               </div>
             ))}
